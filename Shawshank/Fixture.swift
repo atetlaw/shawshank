@@ -20,13 +20,19 @@ extension Fixture {
     }
 }
 
+public func ==(lhs: Fixture, rhs: Fixture) -> Bool {
+    return lhs.httpStatus == rhs.httpStatus &&
+        lhs.data == rhs.data &&
+        lhs.headerFields == rhs.headerFields
+}
+
 struct TestFixture: Fixture {
     var data: Data
     var httpStatus: HTTPStatus
     var headerFields: [String : String]
 }
 
-public enum BundleFixtureType {
+public enum BundleFixtureType: Equatable {
     case empty
     case resource(String, String)
     case html(String)
@@ -42,8 +48,10 @@ public enum BundleFixtureType {
             return "text/html"
         case .json:
             return "application/json; charset=utf-8"
+        case .xml:
+            return "application/xml; charset=utf-8"
         case .plist:
-            return ""
+            return "application/xml; charset=utf-8"
         case .jpg:
             return "image/jpeg"
         case .png:
@@ -54,11 +62,42 @@ public enum BundleFixtureType {
     }
 }
 
-struct BundleFixture: Fixture {
+public func ==(lhs: BundleFixtureType, rhs: BundleFixtureType) -> Bool {
+    switch (lhs, rhs) {
+    case (let .resource(name1, ext1), let .resource(name2, ext2)):
+        return name1 == name2 && ext1 == ext2
+
+    case (let .html(name1), let .html(name2)):
+        return name1 == name2
+
+    case (let .json(name1), let .json(name2)):
+        return name1 == name2
+
+    case (let .xml(name1), let .xml(name2)):
+        return name1 == name2
+
+    case (let .plist(name1), let .plist(name2)):
+        return name1 == name2
+
+    case (let .jpg(name1), let .jpg(name2)):
+        return name1 == name2
+
+    case (let .png(name1), let .png(name2)):
+        return name1 == name2
+
+    case (.empty, .empty):
+        return true
+
+    default:
+        return false
+    }
+}
+
+public struct BundleFixture: Fixture, Equatable {
     var type: BundleFixtureType
-    var httpStatus: HTTPStatus
-    var headerFields: [String : String]
-    var data: Data
+    public var httpStatus: HTTPStatus
+    public var headerFields: [String : String]
+    public var data: Data
 
     init(type t: BundleFixtureType, status: HTTPStatus? = nil) {
         type = t
@@ -95,6 +134,13 @@ struct BundleFixture: Fixture {
             headerFields = [:]
         }
     }
+}
+
+public func ==(lhs: BundleFixture, rhs: BundleFixture) -> Bool {
+    return lhs.type == rhs.type &&
+        lhs.httpStatus == rhs.httpStatus &&
+        lhs.data == rhs.data &&
+        lhs.headerFields == rhs.headerFields
 }
 
 extension Bundle {

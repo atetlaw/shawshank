@@ -8,53 +8,55 @@
 
 import Foundation
 
-class Shawshank: URLProtocol {
+class Shawshank {
 
     private static var harnesses = [Harness]()
+    private static var protocolRegistered: Bool = false
+
     static var isActive: Bool { return harnesses.count > 0 }
 
-    class func take(_ with: @escaping (URLRequest) -> Bool)  -> Harness {
+    class func take(_ with: @escaping (URLRequest) -> Bool) -> Harness {
         self.bind()
         let harness = Harness(with)
         harnesses.append(harness)
         return harness
     }
 
-    class func take(_ with: @escaping (URLSessionTask) -> Bool)  -> Harness {
+    class func take(_ with: @escaping (URLSessionTask) -> Bool) -> Harness {
         self.bind()
         let harness = Harness(with)
         harnesses.append(harness)
         return harness
     }
 
-    class func take(using: Harness)  -> Harness {
+    class func take(using: Harness) -> Harness {
         self.bind()
         harnesses.append(using)
         return using
     }
 
-    class func take(matching: MatchElement)  -> Harness {
+    class func take(matching: MatchElement) -> Harness {
         self.bind()
         let harness = Harness(matching)
         harnesses.append(harness)
         return harness
     }
 
-    class func take(all: MatchCollection)  -> Harness {
+    class func take(all: MatchCollection) -> Harness {
         self.bind()
         let harness = Harness(all: all)
         harnesses.append(harness)
         return harness
     }
 
-    class func take(any: MatchCollection)  -> Harness {
+    class func take(any: MatchCollection) -> Harness {
         self.bind()
         let harness = Harness(any: any)
         harnesses.append(harness)
         return harness
     }
 
-    class func take(_ taker: Taker)  -> Harness {
+    class func take(_ taker: Taker) -> Harness {
         self.bind()
         let harness = Harness(taker)
         harnesses.append(harness)
@@ -62,49 +64,38 @@ class Shawshank: URLProtocol {
     }
 
     @discardableResult
-    class func bind(_ session: URLSession? = nil) -> Shawshank.Type {
-        URLProtocol.registerClass(Shawshank.self)
-        register(session: URLSession.shared)
-        if let urlSession = session {
-            register(session: urlSession)
+    class func bind(_ config: URLSessionConfiguration? = nil) -> Shawshank.Type {
+        register()
+        if let cfg = config {
+            cfg.registerShawshank()
         }
         return Shawshank.self
     }
 
-    private class func register(session: URLSession) {
-        var protocolClasses = [AnyClass]()
-
-        if let existing = session.configuration.protocolClasses {
-            protocolClasses.append(contentsOf: existing)
-        }
-
-        if !protocolClasses.contains(where: { $0 == Shawshank.self }) {
-            protocolClasses.append(Shawshank.self)
-        }
-
-        let newConfig = session.configuration.copy()
-
-        session.configuration.protocolClasses = protocolClasses
-    }
-
     class func release(_ session: URLSession? = nil) {
-        URLProtocol.unregisterClass(Shawshank.self)
-        unregister(session: URLSession.shared)
-        if let urlSession = session {
-            unregister(session: urlSession)
-        }
-        harnesses.removeAll()
+        unregister()
     }
 
-    private class func unregister(session: URLSession) {
-        var protocolClasses = [AnyClass]()
+    private class func register() {
 
-        if let existing = session.configuration.protocolClasses {
-            protocolClasses.append(contentsOf: existing)
+        let shouldRegister = Mutex().sync { () -> Bool in 
+            guard !protocolRegistered else { return false }
+            protocolRegistered = true
+            return true
         }
 
-        protocolClasses = protocolClasses.filter { $0 != Shawshank.self }
-        session.configuration.protocolClasses = protocolClasses
+        if shouldRegister {
+            URLProtocol.registerClass(ShawshankURLProtocol.self)
+        }
+    }
+
+    private class func unregister() {
+        Mutex().sync {
+            harnesses.removeAll()
+            protocolRegistered = false
+        }
+
+        URLProtocol.unregisterClass(ShawshankURLProtocol.self)
     }
 
     class func harness(for request: URLRequest) -> Harness? {
@@ -120,47 +111,29 @@ class Shawshank: URLProtocol {
         }
         return nil
     }
+}
 
-    // MARK: URLProtocol methods
+extension URLSession {
+    public var isShawshankActive: Bool {
+        return configuration.isShawshankActive
+    }
+}
 
-    open override class func canInit(with request: URLRequest) -> Bool {
-        return (Shawshank.harness(for: request) != nil)
+extension URLSessionConfiguration {
+    public var isShawshankActive: Bool {
+        return protocolClasses?.contains(where: { $0 == ShawshankURLProtocol.self }) ?? false
     }
 
-    open override class func canInit(with task: URLSessionTask) -> Bool {
-        return (Shawshank.harness(for: task) != nil)
-    }
-
-    open override class func canonicalRequest(for request: URLRequest) -> URLRequest {
-        return request
-    }
-
-    open override func startLoading() {
-        guard let harness = Shawshank.harness(for: request) else { return }
-
-        let response = harness.respond(to: request)
-        switch response {
-        case .error(let error):
-            client?.urlProtocol(self, didFailWithError: error)
-            return // Bail out early on error
-        case .http(let httpResponse, let data):
-            client?.urlProtocol(self, didReceive: httpResponse, cacheStoragePolicy: .notAllowed)
-            if let data = data {
-                client?.urlProtocol(self, didLoad: data)
-            }
-
-        case .fixture(let fixture):
-            if let url = request.url, let response = fixture.response(forURL: url) {
-                client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
-                client?.urlProtocol(self, didLoad: fixture.data)
-            }
-
-        default: break
+    public func registerShawshank() {
+        guard let existing = protocolClasses else {
+            protocolClasses = [ShawshankURLProtocol.self]
+            return
         }
+        guard !existing.contains(where: { $0 == ShawshankURLProtocol.self }) else { return }
 
-        client?.urlProtocolDidFinishLoading(self)
+        var protocols: [AnyClass] = [ShawshankURLProtocol.self]
+        protocols.append(contentsOf: existing)
+        protocolClasses = protocols
     }
-
-    open override func stopLoading() {}
 }
 

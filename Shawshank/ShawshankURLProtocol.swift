@@ -8,27 +8,7 @@
 
 import Foundation
 
-class ShawshankProtocol: URLProtocol {
-
-
-    private var testResponse: Response? {
-        guard let harness = testHarness else { return nil }
-
-        switch harness.response {
-        case .request:
-            return harness.respond(to: request)
-        default:
-            if let sessionTask = task {
-                return harness.respond(to: sessionTask)
-            } else {
-                return harness.respond(to: request)
-            }
-        }
-    }
-
-    private var testHarness: Harness? {
-        return Shawshank.harness(for: request)
-    }
+open class ShawshankURLProtocol: URLProtocol {
 
     // MARK: URLProtocol methods
 
@@ -45,26 +25,30 @@ class ShawshankProtocol: URLProtocol {
     }
 
     open override func startLoading() {
-        guard let response = testResponse else { return }
+        guard let harness = Shawshank.harness(for: request) else { return }
 
+        let response = harness.respond(to: request)
         switch response {
         case .error(let error):
             client?.urlProtocol(self, didFailWithError: error)
+        return // Bail out early on error
         case .http(let httpResponse, let data):
             client?.urlProtocol(self, didReceive: httpResponse, cacheStoragePolicy: .notAllowed)
             if let data = data {
                 client?.urlProtocol(self, didLoad: data)
             }
+
         case .fixture(let fixture):
             if let url = request.url, let response = fixture.response(forURL: url) {
                 client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
                 client?.urlProtocol(self, didLoad: fixture.data)
             }
-        default: ()
+
+        default: break
         }
+
+        client?.urlProtocolDidFinishLoading(self)
     }
     
-    open override func stopLoading() {
-        
-    }
+    open override func stopLoading() {}
 }

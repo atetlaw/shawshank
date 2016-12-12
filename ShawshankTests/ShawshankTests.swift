@@ -27,15 +27,18 @@ class ShawshankTests: XCTestCase {
         let harness = Shawshank.harness(for: testRequest)
         XCTAssertNotNil(harness)
         if let response = harness?.respond(to: testRequest) {
-//            XCTAssertTrue(response == Response.none)
+            XCTAssertTrue(response == Response.none)
         }
     }
 
-    func testShawshankIsEnabledViaTask() {
-        Shawshank.take { (_: URLSessionTask) in return true }.respond { (_: URLSessionTask) in return .none }
+    func testShawshankIsEnabledViaProtocol() {
+        Shawshank.take { (_: URLSessionTask) in return true }.respond { (_: ShawshankURLProtocol) in return .none }
         XCTAssertTrue(Shawshank.isActive)
         let harness = Shawshank.harness(for: testSessionTask)
         XCTAssertNotNil(harness)
+        if let response = harness?.respond(to: testRequest) {
+            XCTAssertTrue(response == Response.none)
+        }
     }
 
     func testShawshankRequestHarnessCanTakeTask() {
@@ -43,13 +46,19 @@ class ShawshankTests: XCTestCase {
         XCTAssertTrue(Shawshank.isActive)
         let harness = Shawshank.harness(for: testSessionTask)
         XCTAssertNotNil(harness)
+        if let response = harness?.respond(to: testRequest) {
+            XCTAssertTrue(response == Response.none)
+        }
     }
 
     func testShawshankTaskHarnessCannotTakeRequest() {
-        Shawshank.take { (_: URLSessionTask) in return true }.respond { (_: URLSessionTask) in return .none }
+        Shawshank.take { (_: URLSessionTask) in return true }.respond { (_: ShawshankURLProtocol) in return .none }
         XCTAssertTrue(Shawshank.isActive)
         let harness = Shawshank.harness(for: testRequest)
         XCTAssertNil(harness)
+        if let response = harness?.respond(to: testRequest) {
+            XCTAssertTrue(response == Response.none)
+        }
     }
 
     func testShawshankRespondsToSharedSessionRequest() {
@@ -70,10 +79,11 @@ class ShawshankTests: XCTestCase {
 
     func testShawshankRespondsToCustomSessionRequest() {
         let configuration = URLSessionConfiguration.ephemeral
-        let session = URLSession(configuration: configuration)
-        Shawshank.bind(session).take { (_: URLRequest) in return true }.httpStatus(.httpStatus(101))
+        Shawshank.bind(configuration).take { (_: URLRequest) in return true }.httpStatus(.httpStatus(101))
 
+        let session = URLSession(configuration: configuration)
         XCTAssertTrue(Shawshank.isActive)
+        XCTAssertTrue(session.isShawshankActive)
 
         let expect = expectation(description: "response successful")
 

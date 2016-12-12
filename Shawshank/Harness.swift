@@ -8,73 +8,51 @@
 
 import Foundation
 
-enum Taker {
+public enum Taker {
     case request((URLRequest) -> Bool)
     case task((URLSessionTask) -> Bool)
 }
 
-enum Responder {
+public enum Responder {
     case request((URLRequest) -> Response)
-    case task((URLSessionTask) -> Response)
+    case urlProtocol((ShawshankURLProtocol) -> Response)
 }
 
 open class Harness {
 
     var takes: Taker
-    var response: Responder
+    var response: Responder = .request({ _ in return .none })
 
     init(_ closure: @escaping (URLRequest) -> Bool) {
         takes = .request(closure)
-        response = .request({ _ in return .none })
     }
 
     init(_ closure: @escaping (URLSessionTask) -> Bool) {
         takes = .task(closure)
-        response = .task({ _ in return .none })
     }
 
     init(_ match: MatchElement) {
         takes = match.taker
-        response = .request({ _ in return .none })
     }
 
     init(all match: MatchCollection) {
         takes = match.all
-        response = .request({ _ in return .none })
     }
 
     init(any match: MatchCollection) {
         takes = match.any
-        response = .request({ _ in return .none })
     }
 
     init(_ taker: Taker) {
         takes = taker
-        switch taker {
-        case .task:
-            response = .task({ _ in return .none })
-        default:
-            response = .request({ _ in return .none })
-        }
     }
 
     func respond(_ with: @escaping (URLRequest) -> Response) {
-        switch takes {
-        case .request:
-            response = .request(with)
-        case .task:
-            response = .task({ (task) in
-                guard let original = task.originalRequest else {
-                    guard let current = task.currentRequest else { return .none }
-                    return with(current)
-                }
-                return with(original)
-            })
-        }
+        response = .request(with)
     }
 
-    func respond(_ with: @escaping (URLSessionTask) -> Response) {
-        response = .task(with)
+    func respond(_ with: @escaping (ShawshankURLProtocol) -> Response) {
+        response = .urlProtocol(with)
     }
 
     func respond(with: Response) {
@@ -126,20 +104,16 @@ open class Harness {
         switch response {
         case .request(let respond):
             return respond(to)
-        case .task:
+        case .urlProtocol:
             return .none //unable to respond in this way
         }
     }
 
-    func respond(to: URLSessionTask) -> Response {
+    func respond(to: ShawshankURLProtocol) -> Response {
         switch response {
         case .request(let respond):
-            guard let original = to.originalRequest else {
-                guard let current = to.currentRequest else { return .none }
-                return respond(current)
-            }
-            return respond(original)
-        case .task(let respond):
+            return respond(to.request)
+        case .urlProtocol(let respond):
             return respond(to)
         }
     }

@@ -8,40 +8,48 @@
 
 import Foundation
 
-protocol MatchElement {
-    var matcher: (URLComponents) -> Bool { get }
+public protocol MatchElement {
+    var matches: (URLComponents) -> Bool { get }
     var taker: Taker { get }
 }
 
-protocol MatchCollection {
-    var matches: AnyCollection<MatchElement> { get }
+public protocol MatchCollection {
+    var matches: [MatchElement] { get }
 }
 
 extension MatchCollection {
     var all: Taker {
-        let tests = matches
+        return matches.all
+    }
+
+    var any: Taker {
+        return matches.any
+    }
+}
+
+extension Collection where Iterator.Element == MatchElement {
+    var all: Taker {
         return .request({ (request: URLRequest) -> Bool in
             guard let url = request.url else { return false }
             guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false) else { return false }
-            return tests.reduce(true, { (result, match) -> Bool in
-                return result && match.matcher(components)
+            return self.reduce(true, { (result, match) -> Bool in
+                return result && match.matches(components)
             })
         })
     }
 
     var any: Taker {
-        let tests = matches
         return .request({ (request: URLRequest) -> Bool in
             guard let url = request.url else { return false }
             guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false) else { return false }
-            return tests.reduce(false, { (result, match) -> Bool in
-                return result || match.matcher(components)
+            return self.reduce(false, { (result, match) -> Bool in
+                return result || match.matches(components)
             })
         })
     }
 }
 
-enum Match: MatchElement {
+public enum URLComponentMatch: MatchElement {
     case scheme(String)
     case host(String)
     case port(Int)
@@ -53,8 +61,8 @@ enum Match: MatchElement {
     case match(MatchElement)
 }
 
-extension Match {
-    var matcher: (URLComponents) -> Bool {
+extension URLComponentMatch {
+    public var matches: (URLComponents) -> Bool {
         switch self {
         case .scheme(let scheme):
             return { scheme == $0.scheme }
@@ -73,43 +81,36 @@ extension Match {
         case .queryItem(let item):
             return { ($0.queryItems?.contains(item)) ?? false }
         case .match(let matchElement):
-            return matchElement.matcher
+            return matchElement.matches
         }
     }
 
-    var taker: Taker {
-        let matches = matcher
+    public var taker: Taker {
+        let match = matches
         return .request({ (request: URLRequest) -> Bool in
             guard let url = request.url else { return false }
             guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false) else { return false }
-            return matches(components)
+            return match(components)
         })
     }
 }
 
-extension Match {
-    static func all(_ with: Matches) -> Taker {
-        return with.all
+public struct Matches<E: MatchElement>: MatchCollection {
+    public var matches: [MatchElement] {
+        return [MatchElement](internalMatches.map({$0 as MatchElement}))
     }
 
-    static func any(_ with: Matches) -> Taker {
-        return with.any
-    }
-}
+    private var internalMatches: AnyCollection<E>
 
-struct Matches: MatchCollection {
-    var matches: AnyCollection<MatchElement>
-
-    init(_ with: AnyCollection<MatchElement>) {
-        matches = with
+    init(_ with: AnyCollection<E>) {
+        internalMatches = with
     }
 
-    init<C: Collection>(_ with: C) where C.Iterator.Element == MatchElement  {
-        matches = AnyCollection(Array(with))
-    }
-
-    init(_ with: [MatchElement])  {
-        matches = AnyCollection(with)
+    init<C: Collection>(_ with: C) where C.Iterator.Element == E {
+        internalMatches = AnyCollection(Array(with))
     }
 }
+
+public typealias URLComponentMatches = Matches<URLComponentMatch>
+
 
