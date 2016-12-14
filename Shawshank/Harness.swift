@@ -9,13 +9,17 @@
 import Foundation
 
 public enum Taker {
-    case request((URLRequest) -> Bool)
-    case task((URLSessionTask) -> Bool)
+    public typealias RequestMatcher = (URLRequest) -> Bool
+    public typealias SessionTaskMatcher = (URLSessionTask) -> Bool
+    case request(Taker.RequestMatcher)
+    case task(Taker.SessionTaskMatcher)
 }
 
 public enum Responder {
-    case request((URLRequest) -> Response)
-    case urlProtocol((ShawshankURLProtocol) -> Response)
+    public typealias RequestResponder = (URLRequest) -> Response
+    public typealias ProtocolResponder = (ShawshankURLProtocol) -> Response
+    case request(RequestResponder)
+    case urlProtocol(ProtocolResponder)
 }
 
 open class Harness {
@@ -23,7 +27,7 @@ open class Harness {
     var takes: Taker
     var response: Responder = .request({ _ in return .none })
 
-    init(_ closure: @escaping (URLRequest) -> Bool) {
+    init(_ closure: @escaping Taker.RequestMatcher) {
         takes = .request(closure)
     }
 
@@ -47,11 +51,11 @@ open class Harness {
         takes = taker
     }
 
-    func respond(_ with: @escaping (URLRequest) -> Response) {
+    func respond(_ with: @escaping Responder.RequestResponder) {
         response = .request(with)
     }
 
-    func respond(_ with: @escaping (ShawshankURLProtocol) -> Response) {
+    func respond(_ with: @escaping Responder.ProtocolResponder) {
         response = .urlProtocol(with)
     }
 

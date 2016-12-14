@@ -15,14 +15,14 @@ class Shawshank {
 
     static var isActive: Bool { return harnesses.count > 0 }
 
-    class func take(_ with: @escaping (URLRequest) -> Bool) -> Harness {
+    class func take(_ with: @escaping Taker.RequestMatcher) -> Harness {
         self.bind()
         let harness = Harness(with)
         harnesses.append(harness)
         return harness
     }
 
-    class func take(_ with: @escaping (URLSessionTask) -> Bool) -> Harness {
+    class func take(_ with: @escaping Taker.SessionTaskMatcher) -> Harness {
         self.bind()
         let harness = Harness(with)
         harnesses.append(harness)

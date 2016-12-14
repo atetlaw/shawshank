@@ -9,8 +9,21 @@
 import Foundation
 
 public protocol MatchElement {
-    var matches: (URLComponents) -> Bool { get }
+    typealias Matcher = (URLComponents) -> Bool
+    var matches: Matcher { get }
     var taker: Taker { get }
+}
+
+public func && (lhs: @escaping MatchElement.Matcher, rhs: @escaping MatchElement.Matcher) -> MatchElement.Matcher {
+    return { components in lhs(components) && rhs(components) }
+}
+
+public func || (lhs: @escaping MatchElement.Matcher, rhs: @escaping MatchElement.Matcher) -> MatchElement.Matcher {
+    return { components in lhs(components) || rhs(components) }
+}
+
+public prefix func ! (rhs: @escaping MatchElement.Matcher) -> MatchElement.Matcher {
+    return { components in !rhs(components) }
 }
 
 public protocol MatchCollection {
@@ -31,7 +44,7 @@ extension Collection where Iterator.Element == MatchElement {
     var all: Taker {
         return .request({ (request: URLRequest) -> Bool in
             guard let url = request.url else { return false }
-            guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false) else { return false }
+            guard let components = URLComponents(url: url, resolvingAgainstBaseURL: true) else { return false }
             return self.reduce(true, { (result, match) -> Bool in
                 return result && match.matches(components)
             })
@@ -41,7 +54,7 @@ extension Collection where Iterator.Element == MatchElement {
     var any: Taker {
         return .request({ (request: URLRequest) -> Bool in
             guard let url = request.url else { return false }
-            guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false) else { return false }
+            guard let components = URLComponents(url: url, resolvingAgainstBaseURL: true) else { return false }
             return self.reduce(false, { (result, match) -> Bool in
                 return result || match.matches(components)
             })
@@ -58,11 +71,52 @@ public enum URLComponentMatch: MatchElement {
     case path(String)
     case query(String)
     case queryItem(URLQueryItem)
+    case regex(String)
     case match(MatchElement)
+
+    init(scheme: String) {
+        self = .scheme(scheme)
+    }
+
+    init(host: String) {
+        self = .host(host)
+    }
+
+    init(port: Int) {
+        self = .port(port)
+    }
+
+    init(url: URL) {
+        self = .url(url)
+    }
+
+    init(absolute: String) {
+        self = .absolute(absolute)
+    }
+
+    init(path: String) {
+        self = .path(path)
+    }
+
+    init(query: String) {
+        self = .query(query)
+    }
+
+    init(queryItem: URLQueryItem) {
+        self = .queryItem(queryItem)
+    }
+
+    init(regex: String) {
+        self = .regex(regex)
+    }
+
+    init(match: MatchElement) {
+        self = .match(match)
+    }
 }
 
 extension URLComponentMatch {
-    public var matches: (URLComponents) -> Bool {
+    public var matches: MatchElement.Matcher {
         switch self {
         case .scheme(let scheme):
             return { scheme == $0.scheme }
@@ -80,6 +134,8 @@ extension URLComponentMatch {
             return { ($0.query?.contains(query)) ?? false }
         case .queryItem(let item):
             return { ($0.queryItems?.contains(item)) ?? false }
+        case .regex(let regex):
+            return { (($0.url?.absoluteString.range(of: regex, options: .regularExpression)) != nil) }
         case .match(let matchElement):
             return matchElement.matches
         }
@@ -89,7 +145,7 @@ extension URLComponentMatch {
         let match = matches
         return .request({ (request: URLRequest) -> Bool in
             guard let url = request.url else { return false }
-            guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false) else { return false }
+            guard let components = URLComponents(url: url, resolvingAgainstBaseURL: true) else { return false }
             return match(components)
         })
     }

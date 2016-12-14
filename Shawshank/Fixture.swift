@@ -32,6 +32,25 @@ struct TestFixture: Fixture {
     var headerFields: [String : String]
 }
 
+struct JSONDataFixture: Fixture {
+    var data: Data
+    var httpStatus: HTTPStatus
+    var headerFields: [String : String]
+
+    init(_ source: [String : String], status: HTTPStatus? = nil) {
+        let json = try? JSONSerialization.data(withJSONObject: source, options: .prettyPrinted)
+        data = (json ?? Data())
+
+        headerFields = ["Content-Type":"application/json; charset=utf-8"]
+
+        if let s = status {
+            httpStatus = s
+        } else {
+            httpStatus = data.isEmpty ? .notFound : .success
+        }
+    }
+}
+
 public enum BundleFixtureType: Equatable {
     case empty
     case resource(String, String)
