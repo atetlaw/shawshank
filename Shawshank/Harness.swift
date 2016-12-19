@@ -8,18 +8,19 @@
 
 import Foundation
 
+public typealias RequestPredicate = (URLRequest) -> Bool
+public typealias ComponentPredicate = (URLComponents) -> Bool
+public typealias SessionTaskPredicate = (URLSessionTask) -> Bool
+
 public enum Taker {
-    public typealias RequestMatcher = (URLRequest) -> Bool
-    public typealias SessionTaskMatcher = (URLSessionTask) -> Bool
-    case request(Taker.RequestMatcher)
-    case task(Taker.SessionTaskMatcher)
+    case request(RequestPredicate)
+    case component(ComponentPredicate)
+    case task(SessionTaskPredicate)
 }
 
 public enum Responder {
-    public typealias RequestResponder = (URLRequest) -> Response
-    public typealias ProtocolResponder = (ShawshankURLProtocol) -> Response
-    case request(RequestResponder)
-    case urlProtocol(ProtocolResponder)
+    case request((URLRequest) -> Response)
+    case urlProtocol((ShawshankURLProtocol) -> Response)
 }
 
 open class Harness {
@@ -27,12 +28,16 @@ open class Harness {
     var takes: Taker
     var response: Responder = .request({ _ in return .none })
 
-    init(_ closure: @escaping Taker.RequestMatcher) {
-        takes = .request(closure)
+    init(_ predicate: @escaping RequestPredicate) {
+        takes = .request(predicate)
     }
 
-    init(_ closure: @escaping (URLSessionTask) -> Bool) {
-        takes = .task(closure)
+    init(_ predicate: @escaping ComponentPredicate) {
+        takes = .component(predicate)
+    }
+
+    init(_ predicate: @escaping SessionTaskPredicate) {
+        takes = .task(predicate)
     }
 
     init(_ match: MatchElement) {
@@ -40,22 +45,22 @@ open class Harness {
     }
 
     init(all match: MatchCollection) {
-        takes = match.all
+        takes = match.takeAll
     }
 
     init(any match: MatchCollection) {
-        takes = match.any
+        takes = match.takeAny
     }
 
     init(_ taker: Taker) {
         takes = taker
     }
 
-    func respond(_ with: @escaping Responder.RequestResponder) {
+    func respond(_ with: @escaping (URLRequest) -> Response) {
         response = .request(with)
     }
 
-    func respond(_ with: @escaping Responder.ProtocolResponder) {
+    func respond(_ with: @escaping (ShawshankURLProtocol) -> Response) {
         response = .urlProtocol(with)
     }
 
@@ -86,6 +91,9 @@ open class Harness {
         switch takes {
         case .request(let take):
             return take(to)
+        case .component(let take):
+            guard let components = urlComponents(request: to) else { return false }
+            return take(components)
         case .task:
             return false
         }
@@ -94,11 +102,12 @@ open class Harness {
     func responds(to: URLSessionTask) -> Bool {
         switch takes {
         case .request(let take):
-            guard let original = to.originalRequest else {
-                guard let current = to.currentRequest else { return false }
-                return take(current)
-            }
-            return take(original)
+            guard let request = urlRequest(task: to) else { return false }
+            return take(request)
+        case .component(let take):
+            guard let request = urlRequest(task: to) else { return false }
+            guard let components = urlComponents(request: request) else { return false }
+            return take(components)
         case .task(let take):
             return take(to)
         }
@@ -120,6 +129,20 @@ open class Harness {
         case .urlProtocol(let respond):
             return respond(to)
         }
+    }
+
+    func urlComponents(request: URLRequest) -> URLComponents? {
+        guard let url = request.url else { return nil }
+        guard let components = URLComponents(url: url, resolvingAgainstBaseURL: true) else { return nil }
+        return components
+    }
+
+    func urlRequest(task: URLSessionTask) -> URLRequest? {
+        guard let original = task.originalRequest else {
+            guard let current = task.currentRequest else { return nil }
+            return current
+        }
+        return original
     }
 }
 

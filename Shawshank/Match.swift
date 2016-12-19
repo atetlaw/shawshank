@@ -9,21 +9,18 @@
 import Foundation
 
 public protocol MatchElement {
-    typealias Matcher = (URLComponents) -> Bool
-    var matches: Matcher { get }
-    var taker: Taker { get }
+    var predicate: ComponentPredicate { get }
 }
 
-public func && (lhs: @escaping MatchElement.Matcher, rhs: @escaping MatchElement.Matcher) -> MatchElement.Matcher {
-    return { components in lhs(components) && rhs(components) }
-}
-
-public func || (lhs: @escaping MatchElement.Matcher, rhs: @escaping MatchElement.Matcher) -> MatchElement.Matcher {
-    return { components in lhs(components) || rhs(components) }
-}
-
-public prefix func ! (rhs: @escaping MatchElement.Matcher) -> MatchElement.Matcher {
-    return { components in !rhs(components) }
+extension MatchElement {
+    public var taker: Taker {
+        let matches = predicate
+        return .request({ (request) in
+            guard let url = request.url else { return false }
+            guard let components = URLComponents(url: url, resolvingAgainstBaseURL: true) else { return false }
+            return matches(components)
+        })
+    }
 }
 
 public protocol MatchCollection {
@@ -31,33 +28,39 @@ public protocol MatchCollection {
 }
 
 extension MatchCollection {
-    var all: Taker {
-        return matches.all
+    var matchAll: ComponentPredicate {
+        let collection = matches
+        return { (components) in
+            return collection.reduce(true, { (result, match) -> Bool in
+                return result && match.predicate(components)
+            })
+        }
     }
 
-    var any: Taker {
-        return matches.any
+    var matchAny: ComponentPredicate {
+        let collection = matches
+        return { (components) in
+            return collection.reduce(false, { (result, match) -> Bool in
+                return result || match.predicate(components)
+            })
+        }
     }
-}
 
-extension Collection where Iterator.Element == MatchElement {
-    var all: Taker {
-        return .request({ (request: URLRequest) -> Bool in
+    var takeAll: Taker {
+        let matches = matchAll
+        return .request({ (request) in
             guard let url = request.url else { return false }
             guard let components = URLComponents(url: url, resolvingAgainstBaseURL: true) else { return false }
-            return self.reduce(true, { (result, match) -> Bool in
-                return result && match.matches(components)
-            })
+            return matches(components)
         })
     }
 
-    var any: Taker {
-        return .request({ (request: URLRequest) -> Bool in
+    var takeAny: Taker {
+        let matches = matchAny
+        return .request({ (request) in
             guard let url = request.url else { return false }
             guard let components = URLComponents(url: url, resolvingAgainstBaseURL: true) else { return false }
-            return self.reduce(false, { (result, match) -> Bool in
-                return result || match.matches(components)
-            })
+            return matches(components)
         })
     }
 }
@@ -116,7 +119,11 @@ public enum URLComponentMatch: MatchElement {
 }
 
 extension URLComponentMatch {
-    public var matches: MatchElement.Matcher {
+    public func matches(_ components: URLComponents) -> Bool {
+        return predicate(components)
+    }
+
+    public var predicate: ComponentPredicate {
         switch self {
         case .scheme(let scheme):
             return { scheme == $0.scheme }
@@ -137,17 +144,8 @@ extension URLComponentMatch {
         case .regex(let regex):
             return { (($0.url?.absoluteString.range(of: regex, options: .regularExpression)) != nil) }
         case .match(let matchElement):
-            return matchElement.matches
+            return matchElement.predicate
         }
-    }
-
-    public var taker: Taker {
-        let match = matches
-        return .request({ (request: URLRequest) -> Bool in
-            guard let url = request.url else { return false }
-            guard let components = URLComponents(url: url, resolvingAgainstBaseURL: true) else { return false }
-            return match(components)
-        })
     }
 }
 
