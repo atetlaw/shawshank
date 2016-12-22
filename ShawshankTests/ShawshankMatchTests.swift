@@ -21,90 +21,67 @@ class ShawshankMatchTests: XCTestCase {
         super.tearDown()
     }
 
-    func testShawshankMatchElements() {
+    func testURLRequestTestComponentPredicate() {
         let testURL = URL(string: "http://www.example.com:82/path/to/something?offset=10&count=100")!
         guard let components = URLComponents(url: testURL, resolvingAgainstBaseURL: true) else { return }
 
-        XCTAssertTrue(URLComponentMatch.scheme("http").predicate(components))
-        XCTAssertFalse(URLComponentMatch.scheme("https").predicate(components))
+        XCTAssertTrue(URLRequestTest.scheme("http").componentPredicate(components))
+        XCTAssertFalse(URLRequestTest.scheme("https").componentPredicate(components))
 
-        XCTAssertTrue(URLComponentMatch.host("www.example.com").predicate(components))
-        XCTAssertFalse(URLComponentMatch.host("example.com").predicate(components))
+        XCTAssertTrue(URLRequestTest.host("www.example.com").componentPredicate(components))
+        XCTAssertFalse(URLRequestTest.host("example.com").componentPredicate(components))
 
-        XCTAssertTrue(URLComponentMatch.port(82).predicate(components))
-        XCTAssertFalse(URLComponentMatch.port(80).predicate(components))
+        XCTAssertTrue(URLRequestTest.port(82).componentPredicate(components))
+        XCTAssertFalse(URLRequestTest.port(80).componentPredicate(components))
 
-        XCTAssertTrue(URLComponentMatch.url(URL(string: "http://www.example.com:82/path/to/something?offset=10&count=100")!).predicate(components))
-        XCTAssertFalse(URLComponentMatch.url(URL(string: "http://www.example.com:80/path/to/something")!).predicate(components))
+        XCTAssertTrue(URLRequestTest.url(URL(string: "http://www.example.com:82/path/to/something?offset=10&count=100")!).componentPredicate(components))
+        XCTAssertFalse(URLRequestTest.url(URL(string: "http://www.example.com:80/path/to/something")!).componentPredicate(components))
 
-        XCTAssertTrue(URLComponentMatch.absolute("http://www.example.com:82/path/to/something?offset=10&count=100").predicate(components))
-        XCTAssertFalse(URLComponentMatch.absolute("http://www.example.com:82/path/to/").predicate(components))
+        XCTAssertTrue(URLRequestTest.absolute("http://www.example.com:82/path/to/something?offset=10&count=100").componentPredicate(components))
+        XCTAssertFalse(URLRequestTest.absolute("http://www.example.com:82/path/to/").componentPredicate(components))
 
-        XCTAssertTrue(URLComponentMatch.path("/path/to/something").predicate(components))
-        XCTAssertFalse(URLComponentMatch.path("/path/to/").predicate(components))
+        XCTAssertTrue(URLRequestTest.path("/path/to/something").componentPredicate(components))
+        XCTAssertFalse(URLRequestTest.path("/path/to/").componentPredicate(components))
 
-        XCTAssertTrue(URLComponentMatch.query("offset=10&count=100").predicate(components))
-        XCTAssertFalse(URLComponentMatch.query("offset=0&count=100").predicate(components))
+        XCTAssertTrue(URLRequestTest.query("offset=10&count=100").componentPredicate(components))
+        XCTAssertFalse(URLRequestTest.query("offset=0&count=100").componentPredicate(components))
 
-        XCTAssertTrue(URLComponentMatch.queryItem(URLQueryItem(name: "count", value: "100")).matches(components))
-        XCTAssertFalse(URLComponentMatch.queryItem(URLQueryItem(name: "count", value: "0")).matches(components))
+        XCTAssertTrue(URLRequestTest.queryItem(URLQueryItem(name: "count", value: "100")).componentPredicate(components))
+        XCTAssertFalse(URLRequestTest.queryItem(URLQueryItem(name: "count", value: "0")).componentPredicate(components))
 
-        XCTAssertTrue(URLComponentMatch.regex("[ex]{2,}[a-z].").predicate(components))
-        XCTAssertFalse(URLComponentMatch.regex("[xy]{2,}[a-z].").predicate(components))
+        XCTAssertTrue(URLRequestTest.regex("[ex]{2,}[a-z].").componentPredicate(components))
+        XCTAssertFalse(URLRequestTest.regex("[xy]{2,}[a-z].").componentPredicate(components))
     }
 
     func testShawshankMatchElementsConvenienceInitializer() {
         let testURL = URL(string: "http://www.example.com:82/path/to/something?offset=10&count=100")!
         guard let components = URLComponents(url: testURL, resolvingAgainstBaseURL: true) else { return }
 
-        XCTAssertTrue(URLComponentMatch(scheme: "http").matches(components))
-        XCTAssertTrue(URLComponentMatch(host: "www.example.com").matches(components))
-        XCTAssertTrue(URLComponentMatch(port: 82).matches(components))
-        XCTAssertTrue(URLComponentMatch(url: URL(string: "http://www.example.com:82/path/to/something?offset=10&count=100")!).matches(components))
-        XCTAssertTrue(URLComponentMatch(absolute: "http://www.example.com:82/path/to/something?offset=10&count=100").matches(components))
-        XCTAssertTrue(URLComponentMatch(path: "/path/to/something").matches(components))
-        XCTAssertTrue(URLComponentMatch(query: "offset=10&count=100").matches(components))
-        XCTAssertTrue(URLComponentMatch(queryItem: URLQueryItem(name: "count", value: "100")).matches(components))
-        XCTAssertTrue(URLComponentMatch(regex: "[ex]{2,}[a-z].").matches(components))
-    }
-
-    func testShawshankCustomMatchElement() {
-
-        struct CustomMatch: MatchElement {
-            var predicate = { (components: URLComponents) in components.host == "www.example.com" }
-        }
-
-        let testURL = URL(string: "http://www.example.com:82/path/to/something?offset=10&count=100")!
-        guard let components = URLComponents(url: testURL, resolvingAgainstBaseURL: true) else { return }
-
-        XCTAssertTrue(CustomMatch().predicate(components))
-        XCTAssertTrue(URLComponentMatch.match(CustomMatch()).matches(components))
+        XCTAssertTrue(URLRequestTest(scheme: "http").componentPredicate(components))
+        XCTAssertTrue(URLRequestTest(host: "www.example.com").componentPredicate(components))
+        XCTAssertTrue(URLRequestTest(port: 82).componentPredicate(components))
+        XCTAssertTrue(URLRequestTest(url: URL(string: "http://www.example.com:82/path/to/something?offset=10&count=100")!).componentPredicate(components))
+        XCTAssertTrue(URLRequestTest(absolute: "http://www.example.com:82/path/to/something?offset=10&count=100").componentPredicate(components))
+        XCTAssertTrue(URLRequestTest(path: "/path/to/something").componentPredicate(components))
+        XCTAssertTrue(URLRequestTest(query: "offset=10&count=100").componentPredicate(components))
+        XCTAssertTrue(URLRequestTest(queryItem: URLQueryItem(name: "count", value: "100")).componentPredicate(components))
+        XCTAssertTrue(URLRequestTest(regex: "[ex]{2,}[a-z].").componentPredicate(components))
     }
 
     func testShawshankMatchElementCollection() {
         let testURL = URL(string: "http://www.example.com:82/path/to/something?offset=10&count=100")!
-        guard let components = URLComponents(url: testURL, resolvingAgainstBaseURL: true) else { return }
+        let request = URLRequest(url:testURL)
+        XCTAssertTrue(all([URLRequestTest.scheme("http"), URLRequestTest.port(82), URLRequestTest.query("offset=10&count=100")]).test(request))
+        XCTAssertTrue(any([URLRequestTest.scheme("http"), URLRequestTest.port(82), URLRequestTest.query("offset=10&count=100")]).test(request))
 
-        let collection1 = URLComponentMatches([.scheme("http"), .port(82), .query("offset=10&count=100")])
-        XCTAssertTrue(collection1.matchAll(components))
-        XCTAssertTrue(collection1.matchAny(components))
-
-        let collection2 = URLComponentMatches([.scheme("http"), .scheme("https"), .port(81), .port(82), .port(83), .query("offset=10&count=100")])
-        XCTAssertFalse(collection2.matchAll(components))
-        XCTAssertTrue(collection2.matchAny(components))
+        XCTAssertFalse((URLRequestTest(scheme: "http") && URLRequestTest(scheme: "https")).test(request))
+        XCTAssertTrue((URLRequestTest(scheme: "http") || URLRequestTest(scheme: "https")).test(request))
+        XCTAssertTrue((!URLRequestTest(scheme: "https")).test(request))
     }
 
-//    func testShawshankMatchElementCollectionXXX() {
-//        let testURL = URL(string: "http://www.example.com:82/path/to/something?offset=10&count=100")!
-//        guard let components = URLComponents(url: testURL, resolvingAgainstBaseURL: true) else { return }
-//
-//        let collection1 = URLComponentMatch.scheme("http").predicate && URLComponentMatch.port(82).predicate
-//        XCTAssertTrue(collection1.test(components))
-//    }
 
     func testShawshankMatchingDataTask() {
-        let m = URLComponentMatches([.scheme("http"), .host("www.example.com")])
-        Shawshank.take(all: m).httpStatus(.httpStatus(101))
+        Shawshank.take(matching: .scheme("http") && .host("www.example.com")).httpStatus(.httpStatus(101))
 
         let expect = expectation(description: "response successful")
 
@@ -118,25 +95,24 @@ class ShawshankMatchTests: XCTestCase {
         waitForExpectations(timeout: 1, handler: nil)
     }
 
-//    func testShawshankMatchingDataTaskXXX() {
-//        let m = URLComponentMatches([.scheme("http"), .host("www.example.com")])
-//        Shawshank.take(URLComponentMatch.scheme("http").predicate && URLComponentMatch.host("www.example.com").predicate).httpStatus(.httpStatus(101))
-//
-//        let expect = expectation(description: "response successful")
-//
-//        URLSession.shared.dataTask(with: testRequest) { (data, response, error) -> Void in
-//            guard let httpResponse = response as? HTTPURLResponse else { return }
-//            XCTAssertNil(error)
-//            XCTAssertEqual(httpResponse.statusCode, 101)
-//            expect.fulfill()
-//            }.resume()
-//
-//        waitForExpectations(timeout: 1, handler: nil)
-//    }
+    func testShawshankMatchingDataTaskRespondingWithJSONDataFixture() {
+
+        Shawshank.take(matching: .scheme("http") && .host("www.example.com")).fixture(JSONDataFixture(["test":"json"]))
+
+        let expect = expectation(description: "response successful")
+
+        URLSession.shared.dataTask(with: testRequest) { (data, response, error) -> Void in
+            guard let httpResponse = response as? HTTPURLResponse else { return }
+            XCTAssertNil(error)
+            XCTAssertEqual(httpResponse.statusCode, 200)
+            expect.fulfill()
+            }.resume()
+
+        waitForExpectations(timeout: 1, handler: nil)
+    }
 
     func testShawshankMatchingDataTaskFailure() {
-        let m = URLComponentMatches([.scheme("https"), .host("www.zebra.com")])
-        Shawshank.take(all: m).httpStatus(.httpStatus(101))
+        Shawshank.take(matching: .scheme("http") && .host("www.zebra.com")).httpStatus(.httpStatus(101))
 
         let expect = expectation(description: "response successful")
 

@@ -53,13 +53,13 @@ struct JSONDataFixture: Fixture {
 
 public enum BundleFixtureType: Equatable {
     case empty
-    case resource(String, String)
-    case html(String)
-    case json(String)
-    case xml(String)
-    case plist(String)
-    case jpg(String)
-    case png(String)
+    case resource
+    case html
+    case json
+    case xml
+    case plist
+    case jpg
+    case png
 
     var contentType: String? {
         switch self {
@@ -83,28 +83,14 @@ public enum BundleFixtureType: Equatable {
 
 public func ==(lhs: BundleFixtureType, rhs: BundleFixtureType) -> Bool {
     switch (lhs, rhs) {
-    case (let .resource(name1, ext1), let .resource(name2, ext2)):
-        return name1 == name2 && ext1 == ext2
-
-    case (let .html(name1), let .html(name2)):
-        return name1 == name2
-
-    case (let .json(name1), let .json(name2)):
-        return name1 == name2
-
-    case (let .xml(name1), let .xml(name2)):
-        return name1 == name2
-
-    case (let .plist(name1), let .plist(name2)):
-        return name1 == name2
-
-    case (let .jpg(name1), let .jpg(name2)):
-        return name1 == name2
-
-    case (let .png(name1), let .png(name2)):
-        return name1 == name2
-
-    case (.empty, .empty):
+    case (.resource, .resource),
+         (.html, .html),
+         (.json, .json),
+         (.xml, .xml),
+         (.plist, .plist),
+         (.jpg, .jpg),
+         (.png, .png),
+         (.empty, .empty):
         return true
 
     default:
@@ -118,28 +104,10 @@ public struct BundleFixture: Fixture, Equatable {
     public var headerFields: [String : String]
     public var data: Data
 
-    init(type t: BundleFixtureType, status: HTTPStatus? = nil) {
+    init(type t: BundleFixtureType, status: HTTPStatus? = nil, headers: [String : String]? = nil, data d: Data? = nil) {
         type = t
-
-        var bundleData: Data?
-        switch type {
-        case .resource(let name, let ext):
-            bundleData = Bundle(for: Shawshank.self).fixture(named: name, withExension: ext)
-        case .html(let name):
-            bundleData = Bundle(for: Shawshank.self).html(named: name)
-        case .json(let name):
-            bundleData = Bundle(for: Shawshank.self).json(named: name)
-        case .plist(let name):
-            bundleData = Bundle(for: Shawshank.self).plist(named: name)
-        case .jpg(let name):
-            bundleData = Bundle(for: Shawshank.self).jpg(named: name)
-        case .png(let name):
-            bundleData = Bundle(for: Shawshank.self).png(named: name)
-        default:
-            bundleData = Data()
-        }
-
-        data = bundleData ?? Data()
+        data = d ?? Data()
+        headerFields = headers ?? [:]
 
         if let s = status {
             httpStatus = s
@@ -148,9 +116,7 @@ public struct BundleFixture: Fixture, Equatable {
         }
 
         if let content = type.contentType {
-            headerFields = ["Content-Type" : content]
-        } else {
-            headerFields = [:]
+            headerFields["Content-Type"] = content
         }
     }
 }
@@ -163,28 +129,28 @@ public func ==(lhs: BundleFixture, rhs: BundleFixture) -> Bool {
 }
 
 extension Bundle {
-    func fixture(named: String, withExension ext: String) -> Data? {
+    func fixtureData(named: String, withExension ext: String) -> Data? {
         guard let resourceURL = url(forResource: named, withExtension: ext) else { return nil }
         return try? Data(contentsOf: resourceURL)
     }
 
-    func html(named: String) -> Data? {
-        return fixture(named: named, withExension: "html")
+    func html(named: String) -> BundleFixture {
+        return BundleFixture(type: .html, data: fixtureData(named: named, withExension: "html"))
     }
 
-    func json(named: String) -> Data? {
-        return fixture(named: named, withExension: "json")
+    func json(named: String) -> BundleFixture {
+        return BundleFixture(type: .json, data: fixtureData(named: named, withExension: "json"))
     }
 
-    func plist(named: String) -> Data? {
-        return fixture(named: named, withExension: "plist")
+    func plist(named: String) -> BundleFixture {
+        return BundleFixture(type: .plist, data: fixtureData(named: named, withExension: "plist"))
     }
 
-    func jpg(named: String) -> Data? {
-        return fixture(named: named, withExension: "jpg")
+    func jpg(named: String) -> BundleFixture {
+        return BundleFixture(type: .jpg, data: fixtureData(named: named, withExension: "jpg"))
     }
 
-    func png(named: String) -> Data? {
-        return fixture(named: named, withExension: "png")
+    func png(named: String) -> BundleFixture {
+        return BundleFixture(type: .png, data: fixtureData(named: named, withExension: "png"))
     }
 }

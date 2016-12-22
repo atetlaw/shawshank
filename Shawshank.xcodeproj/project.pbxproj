@@ -10,11 +10,14 @@
 		4902A9181DFB95FF0015F21D /* Harness.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4902A9171DFB95FF0015F21D /* Harness.swift */; };
 		491E258E1DF0E7980053955F /* Shawshank.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 491E25841DF0E7980053955F /* Shawshank.framework */; };
 		492AFA4B1DF3AC8C00A07E25 /* ShawshankTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B5DDFB1DF3A9DA00CD1DA7 /* ShawshankTests.swift */; };
+		493270DC1E0A6F5C00052F09 /* test.json in Resources */ = {isa = PBXBuildFile; fileRef = 493270DB1E0A6F5C00052F09 /* test.json */; };
+		493270DE1E0A78C400052F09 /* ShawshankStressTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 493270DD1E0A78C400052F09 /* ShawshankStressTests.swift */; };
+		49725CC31E07E04D009AA63B /* Typical.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49725CC21E07E04D009AA63B /* Typical.swift */; };
 		49AECC0D1DFE8863002D4438 /* Shawshank+Sync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49AECC0C1DFE8863002D4438 /* Shawshank+Sync.swift */; };
 		49B5DDFD1DF3A9DA00CD1DA7 /* Shawshank.h in Headers */ = {isa = PBXBuildFile; fileRef = 49B5DDF71DF3A9DA00CD1DA7 /* Shawshank.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		49B5DDFE1DF3A9DA00CD1DA7 /* Shawshank.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B5DDF81DF3A9DA00CD1DA7 /* Shawshank.swift */; };
 		49C11A1E1DFC552900FA76A7 /* Response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C11A1D1DFC552900FA76A7 /* Response.swift */; };
-		49C11A201DFC553400FA76A7 /* Match.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C11A1F1DFC553400FA76A7 /* Match.swift */; };
+		49C11A201DFC553400FA76A7 /* URLRequestTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C11A1F1DFC553400FA76A7 /* URLRequestTest.swift */; };
 		49C11A221DFCD98500FA76A7 /* ShawshankMatchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C11A211DFCD98500FA76A7 /* ShawshankMatchTests.swift */; };
 		49C11A241DFD675700FA76A7 /* Fixture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C11A231DFD675700FA76A7 /* Fixture.swift */; };
 		49C11A261DFE044E00FA76A7 /* ShawshankURLProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C11A251DFE044E00FA76A7 /* ShawshankURLProtocol.swift */; };
@@ -34,6 +37,9 @@
 		4902A9171DFB95FF0015F21D /* Harness.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Harness.swift; sourceTree = "<group>"; };
 		491E25841DF0E7980053955F /* Shawshank.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Shawshank.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		491E258D1DF0E7980053955F /* ShawshankTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ShawshankTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		493270DB1E0A6F5C00052F09 /* test.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = test.json; sourceTree = "<group>"; };
+		493270DD1E0A78C400052F09 /* ShawshankStressTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShawshankStressTests.swift; sourceTree = "<group>"; };
+		49725CC21E07E04D009AA63B /* Typical.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Typical.swift; sourceTree = "<group>"; };
 		49AECC0C1DFE8863002D4438 /* Shawshank+Sync.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Shawshank+Sync.swift"; sourceTree = "<group>"; };
 		49B5DDF61DF3A9DA00CD1DA7 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		49B5DDF71DF3A9DA00CD1DA7 /* Shawshank.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Shawshank.h; sourceTree = "<group>"; };
@@ -41,7 +47,7 @@
 		49B5DDFA1DF3A9DA00CD1DA7 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		49B5DDFB1DF3A9DA00CD1DA7 /* ShawshankTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShawshankTests.swift; sourceTree = "<group>"; };
 		49C11A1D1DFC552900FA76A7 /* Response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Response.swift; sourceTree = "<group>"; };
-		49C11A1F1DFC553400FA76A7 /* Match.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Match.swift; sourceTree = "<group>"; };
+		49C11A1F1DFC553400FA76A7 /* URLRequestTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = URLRequestTest.swift; sourceTree = "<group>"; };
 		49C11A211DFCD98500FA76A7 /* ShawshankMatchTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShawshankMatchTests.swift; sourceTree = "<group>"; };
 		49C11A231DFD675700FA76A7 /* Fixture.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Fixture.swift; sourceTree = "<group>"; };
 		49C11A251DFE044E00FA76A7 /* ShawshankURLProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShawshankURLProtocol.swift; sourceTree = "<group>"; };
@@ -84,6 +90,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		493270DA1E0A6F5C00052F09 /* fixtures */ = {
+			isa = PBXGroup;
+			children = (
+				493270DB1E0A6F5C00052F09 /* test.json */,
+			);
+			path = fixtures;
+			sourceTree = "<group>";
+		};
 		49B5DDF51DF3A9DA00CD1DA7 /* Shawshank */ = {
 			isa = PBXGroup;
 			children = (
@@ -93,7 +107,8 @@
 				49AECC0C1DFE8863002D4438 /* Shawshank+Sync.swift */,
 				49C11A251DFE044E00FA76A7 /* ShawshankURLProtocol.swift */,
 				4902A9171DFB95FF0015F21D /* Harness.swift */,
-				49C11A1F1DFC553400FA76A7 /* Match.swift */,
+				49C11A1F1DFC553400FA76A7 /* URLRequestTest.swift */,
+				49725CC21E07E04D009AA63B /* Typical.swift */,
 				49C11A1D1DFC552900FA76A7 /* Response.swift */,
 				49C11A231DFD675700FA76A7 /* Fixture.swift */,
 			);
@@ -104,8 +119,10 @@
 			isa = PBXGroup;
 			children = (
 				49B5DDFA1DF3A9DA00CD1DA7 /* Info.plist */,
+				493270DA1E0A6F5C00052F09 /* fixtures */,
 				49B5DDFB1DF3A9DA00CD1DA7 /* ShawshankTests.swift */,
 				49C11A211DFCD98500FA76A7 /* ShawshankMatchTests.swift */,
+				493270DD1E0A78C400052F09 /* ShawshankStressTests.swift */,
 			);
 			path = ShawshankTests;
 			sourceTree = "<group>";
@@ -213,6 +230,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				493270DC1E0A6F5C00052F09 /* test.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -226,9 +244,10 @@
 				49C11A261DFE044E00FA76A7 /* ShawshankURLProtocol.swift in Sources */,
 				4902A9181DFB95FF0015F21D /* Harness.swift in Sources */,
 				49B5DDFE1DF3A9DA00CD1DA7 /* Shawshank.swift in Sources */,
-				49C11A201DFC553400FA76A7 /* Match.swift in Sources */,
+				49C11A201DFC553400FA76A7 /* URLRequestTest.swift in Sources */,
 				49C11A1E1DFC552900FA76A7 /* Response.swift in Sources */,
 				49C11A241DFD675700FA76A7 /* Fixture.swift in Sources */,
+				49725CC31E07E04D009AA63B /* Typical.swift in Sources */,
 				49AECC0D1DFE8863002D4438 /* Shawshank+Sync.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -239,6 +258,7 @@
 			files = (
 				49C11A221DFCD98500FA76A7 /* ShawshankMatchTests.swift in Sources */,
 				492AFA4B1DF3AC8C00A07E25 /* ShawshankTests.swift in Sources */,
+				493270DE1E0A78C400052F09 /* ShawshankStressTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

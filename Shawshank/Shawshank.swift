@@ -42,23 +42,9 @@ class Shawshank {
         return using
     }
 
-    class func take(matching: MatchElement) -> Harness {
+    class func take(matching: URLRequestTest) -> Harness {
         self.bind()
         let harness = Harness(matching)
-        harnesses.append(harness)
-        return harness
-    }
-
-    class func take(all: MatchCollection) -> Harness {
-        self.bind()
-        let harness = Harness(all: all)
-        harnesses.append(harness)
-        return harness
-    }
-
-    class func take(any: MatchCollection) -> Harness {
-        self.bind()
-        let harness = Harness(any: any)
         harnesses.append(harness)
         return harness
     }

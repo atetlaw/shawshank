@@ -40,16 +40,8 @@ open class Harness {
         takes = .task(predicate)
     }
 
-    init(_ match: MatchElement) {
-        takes = match.taker
-    }
-
-    init(all match: MatchCollection) {
-        takes = match.takeAll
-    }
-
-    init(any match: MatchCollection) {
-        takes = match.takeAny
+    init(_ test: URLRequestTest) {
+        takes = test.taker
     }
 
     init(_ taker: Taker) {
