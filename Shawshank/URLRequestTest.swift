@@ -20,7 +20,7 @@ public enum URLRequestTest: Typical {
     case query(String)
     case queryItem(URLQueryItem)
     case regex(String)
-    case test((URLRequest) -> Bool)
+    case request((URLRequest) -> Bool)
 
     public init(scheme: String) {
         self = .scheme(scheme)
@@ -59,20 +59,18 @@ public enum URLRequestTest: Typical {
     }
 
     public init(_ closure: @escaping (URLRequest) -> Bool) {
-        self = .test(closure)
+        self = .request(closure)
     }
 
-    public var test: (URLRequest) -> Bool {
+    public func test(_ request: URLRequest) -> Bool {
         switch self {
-        case .test(let closure):
-            return closure
+        case .request(let closure):
+            return closure(request)
         default:
             let matches = componentPredicate
-            return {
-                guard let url = $0.url else { return false }
-                guard let components = URLComponents(url: url, resolvingAgainstBaseURL: true) else { return false }
-                return matches(components)
-            }
+            guard let url = request.url else { return false }
+            guard let components = URLComponents(url: url, resolvingAgainstBaseURL: true) else { return false }
+            return matches(components)
         }
     }
 

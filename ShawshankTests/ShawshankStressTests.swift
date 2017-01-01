@@ -31,8 +31,13 @@ class ShawshankStressTests: XCTestCase {
 
 public struct TypicalRequest: Typical {
     public typealias Subject = URLRequest
-    public var test: (URLRequest) -> Bool
+
+    public func test(_ s: URLRequest) -> Bool {
+        return closure(s)
+    }
+
+    public var closure: (URLRequest) -> Bool
     public init(_ t: @escaping (URLRequest) -> Bool) {
-        test = t
+        closure = t
     }
 }

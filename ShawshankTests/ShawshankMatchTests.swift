@@ -97,7 +97,7 @@ class ShawshankMatchTests: XCTestCase {
 
     func testShawshankMatchingDataTaskRespondingWithJSONDataFixture() {
 
-        Shawshank.take(matching: .scheme("http") && .host("www.example.com")).fixture(JSONDataFixture(["test":"json"]))
+        Shawshank.take(matching: !.scheme("http") || .host("www.example.com")).fixture(JSONDataFixture(["test":"json"]))
 
         let expect = expectation(description: "response successful")
 

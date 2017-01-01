@@ -10,7 +10,7 @@ import Foundation
 
 class Shawshank {
 
-    private static var harnesses = [Harness]()
+    fileprivate static var harnesses = [Harness]()
     private static var protocolRegistered: Bool = false
 
     static var isActive: Bool { return harnesses.count > 0 }
@@ -103,6 +103,29 @@ class Shawshank {
             return harness
         }
         return nil
+    }
+}
+
+extension Shawshank {
+    @objc class func takeWithRequestPredicate(_ with: @escaping (URLRequest) -> Bool) -> ObjcHarness {
+        self.bind()
+        let shim = ObjcHarness(withRequestPredicate: with)
+        harnesses.append(shim.harness)
+        return shim
+    }
+
+    @objc class func takeWithComponentPredicate(_ with: @escaping (URLComponents) -> Bool) -> ObjcHarness {
+        self.bind()
+        let shim = ObjcHarness(withComponentPredicate: with)
+        harnesses.append(shim.harness)
+        return shim
+    }
+
+    @objc class func takeWithSessionTaskPredicate(_ with: @escaping (URLSessionTask) -> Bool) -> ObjcHarness {
+        self.bind()
+        let shim = ObjcHarness(withSessionTaskPredicate: with)
+        harnesses.append(shim.harness)
+        return shim
     }
 }
 
