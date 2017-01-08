@@ -71,8 +71,8 @@ class ShawshankMatchTests: XCTestCase {
     func testShawshankMatchElementCollection() {
         let testURL = URL(string: "http://www.example.com:82/path/to/something?offset=10&count=100")!
         let request = URLRequest(url:testURL)
-        XCTAssertTrue(all([URLRequestTest.scheme("http"), URLRequestTest.port(82), URLRequestTest.query("offset=10&count=100")]).test(request))
-        XCTAssertTrue(any([URLRequestTest.scheme("http"), URLRequestTest.port(82), URLRequestTest.query("offset=10&count=100")]).test(request))
+        XCTAssertTrue([URLRequestTest.scheme("http"), URLRequestTest.port(82), URLRequestTest.query("offset=10&count=100")].withAll.test(request))
+        XCTAssertTrue([URLRequestTest.scheme("http"), URLRequestTest.port(82), URLRequestTest.query("offset=10&count=100")].withAny.test(request))
 
         XCTAssertFalse((URLRequestTest(scheme: "http") && URLRequestTest(scheme: "https")).test(request))
         XCTAssertTrue((URLRequestTest(scheme: "http") || URLRequestTest(scheme: "https")).test(request))

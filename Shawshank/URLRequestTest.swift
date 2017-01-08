@@ -73,10 +73,6 @@ public enum URLRequestTest: Typical {
             return matches(components)
         }
     }
-
-    public static func build(_ tests: URLRequestTest ...) -> URLRequestTest {
-        return all(tests)
-    }
 }
 
 extension URLRequestTest {
