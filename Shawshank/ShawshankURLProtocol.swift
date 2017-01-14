@@ -69,10 +69,10 @@ open class ShawshankURLProtocol: URLProtocol {
     }
 
     private func respond(with: SHKResponse) {
-        if let error = with.error {
+        if let error = with.requestError {
             client?.urlProtocol(self, didFailWithError: error)
-        } else if let response = with.response {
-            respond(with: response, data: with.data as Data?)
+        } else if let response = with.httpResponse {
+            respond(with: response, data: with.responseData as Data?)
         }
     }
 }

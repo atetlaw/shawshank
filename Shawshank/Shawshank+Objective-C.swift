@@ -43,26 +43,26 @@ public class SHKShawshank: NSObject {
         harness = Harness(predicate)
     }
 
-    @objc public func respond(_ with: SHKResponse) {
-        harness.response = .request({ _ in return .shkResponse(with) })
+    @objc public func with(response: SHKResponse) {
+        harness.response = .request({ _ in return .shkResponse(response) })
     }
 }
 
 @objc public class SHKResponse: NSObject {
-    public var error: NSError?
-    public var response: HTTPURLResponse?
-    public var data: NSData?
+    public var requestError: NSError?
+    public var httpResponse: HTTPURLResponse?
+    public var responseData: NSData?
 
     public override init() {
-        error = nil
-        response = nil
-        data = nil
+        requestError = nil
+        httpResponse = nil
+        responseData = nil
     }
 
     public init(withError: NSError?, withHTTPResponse: HTTPURLResponse?, withResponseData: NSData?) {
-        error = withError
-        response = withHTTPResponse
-        data = withResponseData
+        requestError = withError
+        httpResponse = withHTTPResponse
+        responseData = withResponseData
     }
 
 }
