@@ -8,48 +8,48 @@
 
 import Foundation
 
-class Shawshank {
+public class Shawshank {
 
     fileprivate static var harnesses = [Harness]()
     private static var protocolRegistered: Bool = false
 
-    static var isActive: Bool { return harnesses.count > 0 }
+    public static var isActive: Bool { return harnesses.count > 0 }
 
-    class func take(_ with: @escaping (URLRequest) -> Bool) -> Harness {
+    public class func take(_ with: @escaping (URLRequest) -> Bool) -> Harness {
         self.bind()
         let harness = Harness(with)
         harnesses.append(harness)
         return harness
     }
 
-    class func take(_ with: @escaping (URLComponents) -> Bool) -> Harness {
+    public class func take(_ with: @escaping (URLComponents) -> Bool) -> Harness {
         self.bind()
         let harness = Harness(with)
         harnesses.append(harness)
         return harness
     }
 
-    class func take(_ with: @escaping (URLSessionTask) -> Bool) -> Harness {
+    public class func take(_ with: @escaping (URLSessionTask) -> Bool) -> Harness {
         self.bind()
         let harness = Harness(with)
         harnesses.append(harness)
         return harness
     }
 
-    class func take(using: Harness) -> Harness {
+    public class func take(using: Harness) -> Harness {
         self.bind()
         harnesses.append(using)
         return using
     }
 
-    class func take(matching: URLRequestTest) -> Harness {
+    public class func take(matching: URLRequestTest) -> Harness {
         self.bind()
         let harness = Harness(matching)
         harnesses.append(harness)
         return harness
     }
 
-    class func take(_ taker: Taker) -> Harness {
+    public class func take(_ taker: Taker) -> Harness {
         self.bind()
         let harness = Harness(taker)
         harnesses.append(harness)
@@ -57,7 +57,7 @@ class Shawshank {
     }
 
     @discardableResult
-    class func bind(_ config: URLSessionConfiguration? = nil) -> Shawshank.Type {
+    public class func bind(_ config: URLSessionConfiguration? = nil) -> Shawshank.Type {
         register()
         if let cfg = config {
             cfg.registerShawshank()
@@ -65,7 +65,7 @@ class Shawshank {
         return Shawshank.self
     }
 
-    class func release(_ session: URLSession? = nil) {
+    public class func release(_ session: URLSession? = nil) {
         unregister()
     }
 
@@ -103,29 +103,6 @@ class Shawshank {
             return harness
         }
         return nil
-    }
-}
-
-extension Shawshank {
-    @objc class func takeWithRequestPredicate(_ with: @escaping (URLRequest) -> Bool) -> ObjcHarness {
-        self.bind()
-        let shim = ObjcHarness(withRequestPredicate: with)
-        harnesses.append(shim.harness)
-        return shim
-    }
-
-    @objc class func takeWithComponentPredicate(_ with: @escaping (URLComponents) -> Bool) -> ObjcHarness {
-        self.bind()
-        let shim = ObjcHarness(withComponentPredicate: with)
-        harnesses.append(shim.harness)
-        return shim
-    }
-
-    @objc class func takeWithSessionTaskPredicate(_ with: @escaping (URLSessionTask) -> Bool) -> ObjcHarness {
-        self.bind()
-        let shim = ObjcHarness(withSessionTaskPredicate: with)
-        harnesses.append(shim.harness)
-        return shim
     }
 }
 

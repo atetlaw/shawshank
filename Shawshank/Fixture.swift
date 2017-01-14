@@ -26,18 +26,18 @@ public func ==(lhs: Fixture, rhs: Fixture) -> Bool {
         lhs.headerFields == rhs.headerFields
 }
 
-struct TestFixture: Fixture {
-    var data: Data
-    var httpStatus: HTTPStatus
-    var headerFields: [String : String]
+public struct TestFixture: Fixture {
+    public var data: Data
+    public var httpStatus: HTTPStatus
+    public var headerFields: [String : String]
 }
 
-struct JSONDataFixture: Fixture {
-    var data: Data
-    var httpStatus: HTTPStatus
-    var headerFields: [String : String]
+public struct JSONDataFixture: Fixture {
+    public var data: Data
+    public var httpStatus: HTTPStatus
+    public var headerFields: [String : String]
 
-    init(_ source: [String : String], status: HTTPStatus? = nil) {
+    public init(_ source: [String : String], status: HTTPStatus? = nil) {
         let json = try? JSONSerialization.data(withJSONObject: source, options: .prettyPrinted)
         data = (json ?? Data())
 
@@ -99,12 +99,12 @@ public func ==(lhs: BundleFixtureType, rhs: BundleFixtureType) -> Bool {
 }
 
 public struct BundleFixture: Fixture, Equatable {
-    var type: BundleFixtureType
+    public var type: BundleFixtureType
     public var httpStatus: HTTPStatus
     public var headerFields: [String : String]
     public var data: Data
 
-    init(type t: BundleFixtureType, status: HTTPStatus? = nil, headers: [String : String]? = nil, data d: Data? = nil) {
+    public init(type t: BundleFixtureType, status: HTTPStatus? = nil, headers: [String : String]? = nil, data d: Data? = nil) {
         type = t
         data = d ?? Data()
         headerFields = headers ?? [:]
@@ -129,28 +129,28 @@ public func ==(lhs: BundleFixture, rhs: BundleFixture) -> Bool {
 }
 
 extension Bundle {
-    func fixtureData(named: String, withExension ext: String) -> Data? {
+    public func fixtureData(named: String, withExension ext: String) -> Data? {
         guard let resourceURL = url(forResource: named, withExtension: ext) else { return nil }
         return try? Data(contentsOf: resourceURL)
     }
 
-    func html(named: String) -> BundleFixture {
+    public func html(named: String) -> BundleFixture {
         return BundleFixture(type: .html, data: fixtureData(named: named, withExension: "html"))
     }
 
-    func json(named: String) -> BundleFixture {
+    public func json(named: String) -> BundleFixture {
         return BundleFixture(type: .json, data: fixtureData(named: named, withExension: "json"))
     }
 
-    func plist(named: String) -> BundleFixture {
+    public func plist(named: String) -> BundleFixture {
         return BundleFixture(type: .plist, data: fixtureData(named: named, withExension: "plist"))
     }
 
-    func jpg(named: String) -> BundleFixture {
+    public func jpg(named: String) -> BundleFixture {
         return BundleFixture(type: .jpg, data: fixtureData(named: named, withExension: "jpg"))
     }
 
-    func png(named: String) -> BundleFixture {
+    public func png(named: String) -> BundleFixture {
         return BundleFixture(type: .png, data: fixtureData(named: named, withExension: "png"))
     }
 }

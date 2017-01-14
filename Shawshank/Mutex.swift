@@ -1,5 +1,5 @@
 //
-//  Shawshank+Sync.swift
+//  Mutex.swift
 //  Shawshank
 //
 //  Created by Andrew Tetlaw on 12/12/16.
@@ -10,7 +10,7 @@ import Foundation
 
 // https://github.com/mattgallagher/CwlUtils/blob/master/CwlUtils/CwlMutex.swift
 
-public final class Mutex {
+final class Mutex {
     private var mutex = pthread_mutex_t()
 
     deinit {

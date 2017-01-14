@@ -26,9 +26,6 @@ class ShawshankTests: XCTestCase {
         XCTAssertTrue(Shawshank.isActive)
         let harness = Shawshank.harness(for: testRequest)
         XCTAssertNotNil(harness)
-        if let response = harness?.respond(to: testRequest) {
-            XCTAssertTrue(response == Response.none)
-        }
     }
 
     func testShawshankIsEnabledViaProtocol() {

@@ -6,17 +6,18 @@
 //  Copyright © 2017 SafetyCulture. All rights reserved.
 //
 
-#import <XCTest/XCTest.h>
+@import XCTest;
+#import <Shawshank/Shawshank-Swift.h>
 
 @interface ShawshankObjectiveCTests : XCTestCase
-
+@property (nonatomic) NSURLRequest *testRequest;
 @end
 
 @implementation ShawshankObjectiveCTests
 
 - (void)setUp {
     [super setUp];
-    // Put setup code here. This method is called before the invocation of each test method in the class.
+    self.testRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://www.example.com/path/to"]];
 }
 
 - (void)tearDown {
@@ -24,16 +25,14 @@
     [super tearDown];
 }
 
-- (void)testExample {
-    // This is an example of a functional test case.
-    // Use XCTAssert and related functions to verify your tests produce the correct results.
+- (void)testObjectiveCAPI
+{
+    SHKResponse *response = [SHKResponse new];
+
+    [[SHKShawshank takeWithRequestPredicate:^BOOL(NSURLRequest *_Nonnull request ) {
+        return YES;
+    }] respond:response];
 }
 
-- (void)testPerformanceExample {
-    // This is an example of a performance test case.
-    [self measureBlock:^{
-        // Put the code you want to measure the time of here.
-    }];
-}
 
 @end

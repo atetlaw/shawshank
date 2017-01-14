@@ -45,6 +45,7 @@ public enum Response: Equatable {
     case http(HTTPURLResponse, Data?)
     case data(Data?)
     case fixture(Fixture)
+    case shkResponse(SHKResponse) // for the obj-c API
 }
 
 public func ==(lhs: Response, rhs: Response) -> Bool {

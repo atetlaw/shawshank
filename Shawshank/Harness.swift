@@ -23,56 +23,56 @@ public enum Responder {
     case urlProtocol((ShawshankURLProtocol) -> Response)
 }
 
-open class Harness {
+public class Harness {
 
     var takes: Taker
     var response: Responder = .request({ _ in return .none })
 
-    init(_ predicate: @escaping RequestPredicate) {
+    public init(_ predicate: @escaping RequestPredicate) {
         takes = .request(predicate)
     }
 
-    init(_ predicate: @escaping ComponentPredicate) {
+    public init(_ predicate: @escaping ComponentPredicate) {
         takes = .component(predicate)
     }
 
-    init(_ predicate: @escaping SessionTaskPredicate) {
+    public init(_ predicate: @escaping SessionTaskPredicate) {
         takes = .task(predicate)
     }
 
-    init(_ test: URLRequestTest) {
+    public init(_ test: URLRequestTest) {
         takes = test.taker
     }
 
-    init(_ taker: Taker) {
+    public init(_ taker: Taker) {
         takes = taker
     }
 
-    func respond(_ with: @escaping (URLRequest) -> Response) {
+    public func respond(_ with: @escaping (URLRequest) -> Response) {
         response = .request(with)
     }
 
-    func respond(_ with: @escaping (ShawshankURLProtocol) -> Response) {
+    public func respond(_ with: @escaping (ShawshankURLProtocol) -> Response) {
         response = .urlProtocol(with)
     }
 
-    func respond(with: Response) {
+    public func respond(with: Response) {
         response = .request({ _ in return with })
     }
 
-    func fixture(_ fixture: Fixture) {
+    public func fixture(_ fixture: Fixture) {
         response = .request({ _ in return .fixture(fixture) })
     }
 
-    func error(_ error: NSError) {
+    public func error(_ error: NSError) {
         response = .request({ _ in return .error(error) })
     }
 
-    func http(_ http: HTTPURLResponse, data: Data? = nil) {
+    public func http(_ http: HTTPURLResponse, data: Data? = nil) {
         response = .request({ _ in return .http(http, data) })
     }
 
-    func httpStatus(_ code: HTTPStatus, data: Data? = nil) {
+    public func httpStatus(_ code: HTTPStatus, data: Data? = nil) {
         response = .request({ (request: URLRequest) in
             guard let url = request.url, let httpResponse = code.httpResponse(url: url) else { return .none }
             return .http(httpResponse, data)

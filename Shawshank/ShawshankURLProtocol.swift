@@ -29,26 +29,50 @@ open class ShawshankURLProtocol: URLProtocol {
 
         let response = harness.respond(to: request)
         switch response {
+        case .none:
+            break
         case .error(let error):
-            client?.urlProtocol(self, didFailWithError: error)
-        return // Bail out early on error
+            respond(with: error)
+
         case .http(let httpResponse, let data):
-            client?.urlProtocol(self, didReceive: httpResponse, cacheStoragePolicy: .notAllowed)
-            if let data = data {
-                client?.urlProtocol(self, didLoad: data)
+            respond(with: httpResponse, data: data)
+
+        case .data(let data):
+            if let url = request.url, let response = HTTPURLResponse(url: url, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: nil) {
+                respond(with: response, data: data)
             }
 
         case .fixture(let fixture):
             if let url = request.url, let response = fixture.response(forURL: url) {
-                client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
-                client?.urlProtocol(self, didLoad: fixture.data)
+                respond(with: response, data: fixture.data)
             }
 
-        default: break
+        case .shkResponse(let response):
+            respond(with: response)
+
         }
 
         client?.urlProtocolDidFinishLoading(self)
     }
     
     open override func stopLoading() {}
+
+    private func respond(with: NSError) {
+        client?.urlProtocol(self, didFailWithError: with)
+    }
+
+    private func respond(with: HTTPURLResponse, data: Data?) {
+        client?.urlProtocol(self, didReceive: with, cacheStoragePolicy: .notAllowed)
+        if let data = data {
+            client?.urlProtocol(self, didLoad: data)
+        }
+    }
+
+    private func respond(with: SHKResponse) {
+        if let error = with.error {
+            client?.urlProtocol(self, didFailWithError: error)
+        } else if let response = with.response {
+            respond(with: response, data: with.data as Data?)
+        }
+    }
 }
