@@ -27,7 +27,7 @@ testResponse.httpResponse = [[NSHTTPURLResponse alloc] initWithURL:self.testRequ
 func testShawshankMatchingDataTaskRespondingWithJSONDataFixture() {
     let testRequest = URLRequest(url: URL(string: "http://www.example.com")!)
     
-    Shawshank.take(matching: !.scheme("http") || .host("www.example.com")).fixture(JSONDataFixture(["test":"json"]))
+    Shawshank.take(matching: .scheme("http") && .host("www.example.com")).fixture(JSONDataFixture(["test":"json"]))
     let expect = expectation(description: "response successful")
     
     URLSession.shared.dataTask(with: testRequest) { (data, response, error) -> Void in
@@ -46,3 +46,5 @@ func testShawshankMatchingDataTaskRespondingWithJSONDataFixture() {
     waitForExpectations(timeout: 1, handler: nil)
 }
 ```
+
+
