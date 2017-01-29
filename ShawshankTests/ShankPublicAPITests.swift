@@ -60,9 +60,37 @@ class ShankPublicAPITests: XCTestCase {
             guard let httpResponse = response as? HTTPURLResponse else { return }
             XCTAssertNil(error)
             XCTAssertEqual(httpResponse.statusCode, 200)
+            XCTAssertNotNil(data)
+            guard let data = data else { XCTFail(); return }
+            guard let json = try? JSONSerialization.jsonObject(with: data, options:[]) as? Dictionary<String, String> else { XCTFail(); return }
+            XCTAssertEqual(json?["test"], "json")
             expect.fulfill()
             }.resume()
         
+        waitForExpectations(timeout: 1, handler: nil)
+    }
+
+    func testShawshankClosureAPIMatchingDataTaskRespondingWithJSONDataFixture() {
+        let testURL = URL(string: "http://www.example.com:82/path/to/something?offset=10&count=100")!
+        let request = URLRequest(url:testURL)
+
+        Shawshank.take { (components: URLComponents) in
+            return components.host == "www.example.com" && components.port == 82
+        }.fixture(JSONDataFixture(["test":"json"]))
+
+        let expect = expectation(description: "response successful")
+
+        URLSession.shared.dataTask(with: request) { (data, response, error) -> Void in
+            guard let httpResponse = response as? HTTPURLResponse else { return }
+            XCTAssertNil(error)
+            XCTAssertEqual(httpResponse.statusCode, 200)
+            XCTAssertNotNil(data)
+            guard let data = data else { XCTFail(); return }
+            guard let json = try? JSONSerialization.jsonObject(with: data, options:[]) as? Dictionary<String, String> else { XCTFail(); return }
+            XCTAssertEqual(json?["test"], "json")
+            expect.fulfill()
+            }.resume()
+
         waitForExpectations(timeout: 1, handler: nil)
     }
     
