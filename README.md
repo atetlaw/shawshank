@@ -9,7 +9,7 @@ Shawshank.take { (components: URLComponents) in
 }.fixture(JSONDataFixture(["test":"json"]))
 ```
 ```swift
-Shawshank.take(matching: .scheme("http") && .host("www.example.com")).httpStatus(.httpStatus(101))
+Shawshank.take(matching: .scheme("http") && .host("www.example.com")).httpStatus(.notPermitted)
 ```
 
 ### Objective-C
