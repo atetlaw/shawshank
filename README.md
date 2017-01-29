@@ -22,3 +22,26 @@ testResponse.httpResponse = [[NSHTTPURLResponse alloc] initWithURL:self.testRequ
     return [components.host isEqualToString:@"www.example.com"] && [components.path isEqualToString:@"/path/to"];
 }] withResponse:testResponse];
 ```
+## Unit Test Example
+```swift
+func testShawshankMatchingDataTaskRespondingWithJSONDataFixture() {
+
+    Shawshank.take(matching: !.scheme("http") || .host("www.example.com")).fixture(JSONDataFixture(["test":"json"]))
+    let expect = expectation(description: "response successful")
+    
+    URLSession.shared.dataTask(with: testRequest) { (data, response, error) -> Void in
+        guard let httpResponse = response as? HTTPURLResponse else { return }
+        XCTAssertNil(error)
+        XCTAssertEqual(httpResponse.statusCode, 200)
+        XCTAssertNotNil(data)
+        
+        guard let data = data else { XCTFail(); return }
+        guard let json = try? JSONSerialization.jsonObject(with: data, options:[]) as? Dictionary<String, String> else { XCTFail(); return }
+            
+        XCTAssertEqual(json?["test"], "json")
+        expect.fulfill()
+    }.resume()
+        
+    waitForExpectations(timeout: 1, handler: nil)
+}
+```
