@@ -32,13 +32,12 @@
 
     [[SHKShawshank takeWithRequestPredicate:^BOOL(NSURLRequest *_Nonnull request ) {
         NSURLComponents *components = [NSURLComponents componentsWithURL:request.URL resolvingAgainstBaseURL:YES];
-        return [components.host isEqualToString:@"www.example.com"] && [components.path isEqualToString:@"path/to"];
+        return [components.host isEqualToString:@"www.example.com"] && [components.path isEqualToString:@"/path/to"];
     }] withResponse:testResponse];
 
     XCTestExpectation *expectation = [self expectationWithDescription:@"response successful"];
     NSURLSessionDataTask *task = [[NSURLSession sharedSession] dataTaskWithRequest:self.testRequest completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         XCTAssertNil(error);
-        XCTAssertNil(data);
         NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
 
         XCTAssertEqual(httpResponse.statusCode, testResponse.httpResponse.statusCode);
