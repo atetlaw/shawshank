@@ -11,6 +11,10 @@ Shawshank.take { (components: URLComponents) in
 ```swift
 Shawshank.take(matching: .scheme("http") && .host("www.example.com")).httpStatus(.notPermitted)
 ```
+```swift
+let json = Bundle(for: ShankPublicAPITests.self).json(named: "test")
+Shawshank.take(matching: .scheme("http") && .host("www.example.com")).fixture(json)
+```
 
 ### Objective-C
 ```objc
