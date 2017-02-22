@@ -1,5 +1,10 @@
 # Shawshank
 "I guess it comes down to a simple choice, really. Get busy testing or get busy crying."
+https://www.youtube.com/watch?v=djigcpyzBUQ
+
+Using an `NSURLProtocol` subclass is a great way to stub network calls in unit tests, but can be laborious to setup. The goal of Shawshank was to make stubbing a network call a one-liner.
+
+It does 2 things: creates a way to match network requests, and specifies what sort of response to return if the match is true.
 
 ## API Examples
 ### Swift
