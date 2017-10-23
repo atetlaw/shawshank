@@ -28,18 +28,18 @@ public class SHKShawshank: NSObject {
 }
 
 
-@objc public class SHKHarness: NSObject {
+public class SHKHarness: NSObject {
     internal let harness: Harness
 
-    public init(withRequestPredicate predicate: @escaping RequestPredicate) {
+    @objc public init(withRequestPredicate predicate: @escaping RequestPredicate) {
         harness = Harness(predicate)
     }
 
-    public init(withComponentPredicate predicate: @escaping ComponentPredicate) {
+    @objc public init(withComponentPredicate predicate: @escaping ComponentPredicate) {
         harness = Harness(predicate)
     }
 
-    public init(withSessionTaskPredicate predicate: @escaping SessionTaskPredicate) {
+    @objc public init(withSessionTaskPredicate predicate: @escaping SessionTaskPredicate) {
         harness = Harness(predicate)
     }
 
@@ -48,18 +48,18 @@ public class SHKShawshank: NSObject {
     }
 }
 
-@objc public class SHKResponse: NSObject {
-    public var requestError: NSError?
-    public var httpResponse: HTTPURLResponse?
-    public var responseData: NSData?
+public class SHKResponse: NSObject {
+    @objc public var requestError: NSError?
+    @objc public var httpResponse: HTTPURLResponse?
+    @objc public var responseData: NSData?
 
-    public override init() {
+    @objc public override init() {
         requestError = nil
         httpResponse = nil
         responseData = nil
     }
 
-    public init(withError: NSError?, withHTTPResponse: HTTPURLResponse?, withResponseData: NSData?) {
+    @objc public init(withError: NSError?, withHTTPResponse: HTTPURLResponse?, withResponseData: NSData?) {
         requestError = withError
         httpResponse = withHTTPResponse
         responseData = withResponseData
