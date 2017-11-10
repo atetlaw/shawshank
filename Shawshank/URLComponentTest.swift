@@ -8,7 +8,7 @@
 
 import Foundation
 
-public enum URLRequestTest: Typical {
+public enum URLComponentTest: Typical {
     public typealias Subject = URLRequest
 
     case scheme(String)
@@ -58,26 +58,11 @@ public enum URLRequestTest: Typical {
         self = .regex(regex)
     }
 
-    public init(_ closure: @escaping (URLRequest) -> Bool) {
-        self = .request(closure)
+    public init(_ predicate: @escaping (URLRequest) -> Bool) {
+        self = .request(predicate)
     }
 
-    public func test(_ request: URLRequest) -> Bool {
-        switch self {
-        case .request(let closure):
-            return closure(request)
-        default:
-            let matches = componentPredicate
-            guard let url = request.url else { return false }
-            guard let components = URLComponents(url: url, resolvingAgainstBaseURL: true) else { return false }
-            return matches(components)
-        }
-    }
-}
-
-extension URLRequestTest {
-
-    public var taker: Taker {
+    var taker: Taker {
         return .request(test)
     }
 
@@ -103,6 +88,18 @@ extension URLRequestTest {
             return { (($0.url?.absoluteString.range(of: regex, options: .regularExpression)) != nil) }
         default:
             return { _ in return false }
+        }
+    }
+
+    public func test(_ request: URLRequest) -> Bool {
+        switch self {
+        case .request(let closure):
+            return closure(request)
+        default:
+            let matches = componentPredicate
+            guard let url = request.url else { return false }
+            guard let components = URLComponents(url: url, resolvingAgainstBaseURL: true) else { return false }
+            return matches(components)
         }
     }
 }

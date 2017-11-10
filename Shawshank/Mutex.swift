@@ -8,7 +8,7 @@
 
 import Foundation
 
-// https://github.com/mattgallagher/CwlUtils/blob/master/CwlUtils/CwlMutex.swift
+// https://www.cocoawithlove.com/blog/2016/06/02/threads-and-mutexes.html
 
 final class Mutex {
     private var mutex = pthread_mutex_t()

@@ -40,7 +40,7 @@ public class Harness {
         takes = .task(predicate)
     }
 
-    public init(_ test: URLRequestTest) {
+    public init(_ test: URLComponentTest) {
         takes = test.taker
     }
 

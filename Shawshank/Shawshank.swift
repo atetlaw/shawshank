@@ -12,26 +12,27 @@ public class Shawshank {
 
     fileprivate static var harnesses = [Harness]()
     private static var protocolRegistered: Bool = false
+    private static let mutex = Mutex()
 
     public static var isActive: Bool { return harnesses.count > 0 }
 
-    public class func take(_ with: @escaping (URLRequest) -> Bool) -> Harness {
+    public class func takeRequest(_ predicate: @escaping (URLRequest) -> Bool) -> Harness {
         self.bind()
-        let harness = Harness(with)
+        let harness = Harness(predicate)
         harnesses.append(harness)
         return harness
     }
 
-    public class func take(_ with: @escaping (URLComponents) -> Bool) -> Harness {
+    public class func takeComponents(_ predicate: @escaping (URLComponents) -> Bool) -> Harness {
         self.bind()
-        let harness = Harness(with)
+        let harness = Harness(predicate)
         harnesses.append(harness)
         return harness
     }
 
-    public class func take(_ with: @escaping (URLSessionTask) -> Bool) -> Harness {
+    public class func takeSessionTask(_ predicate: @escaping (URLSessionTask) -> Bool) -> Harness {
         self.bind()
-        let harness = Harness(with)
+        let harness = Harness(predicate)
         harnesses.append(harness)
         return harness
     }
@@ -42,7 +43,7 @@ public class Shawshank {
         return using
     }
 
-    public class func take(matching: URLRequestTest) -> Harness {
+    public class func take(matching: URLComponentTest) -> Harness {
         self.bind()
         let harness = Harness(matching)
         harnesses.append(harness)
@@ -65,13 +66,20 @@ public class Shawshank {
         return Shawshank.self
     }
 
-    public class func release(_ session: URLSession? = nil) {
-        unregister()
+    @discardableResult
+    public class func unbind() -> Shawshank.Type {
+        mutex.sync {
+            harnesses.removeAll()
+            protocolRegistered = false
+        }
+
+        URLProtocol.unregisterClass(ShawshankURLProtocol.self)
+        return Shawshank.self
     }
 
     private class func register() {
 
-        let shouldRegister = Mutex().sync { () -> Bool in 
+        let shouldRegister = mutex.sync { () -> Bool in
             guard !protocolRegistered else { return false }
             protocolRegistered = true
             return true
@@ -80,15 +88,6 @@ public class Shawshank {
         if shouldRegister {
             URLProtocol.registerClass(ShawshankURLProtocol.self)
         }
-    }
-
-    private class func unregister() {
-        Mutex().sync {
-            harnesses.removeAll()
-            protocolRegistered = false
-        }
-
-        URLProtocol.unregisterClass(ShawshankURLProtocol.self)
     }
 
     class func harness(for request: URLRequest) -> Harness? {
