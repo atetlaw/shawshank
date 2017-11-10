@@ -9,7 +9,7 @@ It does 2 things: creates a way to match network requests, and specifies what so
 ## API Examples
 ### Swift
 ```swift
-Shawshank.take { (components: URLComponents) in
+Shawshank.takeComponents { (components: URLComponents) in
     return components.host == "www.example.com" && components.port == 82
 }.fixture(JSONDataFixture(["test":"json"]))
 ```
