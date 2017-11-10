@@ -26,12 +26,12 @@ class ShankPublicAPITests: XCTestCase {
     func testShawshankMatchElementCollection() {
         let testURL = URL(string: "http://www.example.com:82/path/to/something?offset=10&count=100")!
         let request = URLRequest(url:testURL)
-        XCTAssertTrue([URLRequestTest.scheme("http"), URLRequestTest.port(82), URLRequestTest.query("offset=10&count=100")].withAll.test(request))
-        XCTAssertTrue([URLRequestTest.scheme("http"), URLRequestTest.port(82), URLRequestTest.query("offset=10&count=100")].withAny.test(request))
+        XCTAssertTrue([URLComponentTest.scheme("http"), URLComponentTest.port(82), URLComponentTest.query("offset=10&count=100")].withAll.test(request))
+        XCTAssertTrue([URLComponentTest.scheme("http"), URLComponentTest.port(82), URLComponentTest.query("offset=10&count=100")].withAny.test(request))
 
-        XCTAssertFalse((URLRequestTest(scheme: "http") && URLRequestTest(scheme: "https")).test(request))
-        XCTAssertTrue((URLRequestTest(scheme: "http") || URLRequestTest(scheme: "https")).test(request))
-        XCTAssertTrue((!URLRequestTest(scheme: "https")).test(request))
+        XCTAssertFalse((URLComponentTest(scheme: "http") && URLComponentTest(scheme: "https")).test(request))
+        XCTAssertTrue((URLComponentTest(scheme: "http") || URLComponentTest(scheme: "https")).test(request))
+        XCTAssertTrue((!URLComponentTest(scheme: "https")).test(request))
     }
 
 
@@ -74,7 +74,7 @@ class ShankPublicAPITests: XCTestCase {
         let testURL = URL(string: "http://www.example.com:82/path/to/something?offset=10&count=100")!
         let request = URLRequest(url:testURL)
 
-        Shawshank.take { (components: URLComponents) in
+        Shawshank.takeComponents { (components: URLComponents) in
             return components.host == "www.example.com" && components.port == 82
         }.fixture(JSONDataFixture(["test":"json"]))
 
@@ -98,7 +98,7 @@ class ShankPublicAPITests: XCTestCase {
         let testURL = URL(string: "http://www.example.com:82/path/to/something?offset=10&count=100")!
         let request = URLRequest(url:testURL)
 
-        Shawshank.take { (components: URLComponents) in
+        Shawshank.takeComponents { (components: URLComponents) in
             return components.host == "www.example.com" && components.port == 82
             }.fixture(Bundle(for: ShankPublicAPITests.self).json(named: "test"))
 
