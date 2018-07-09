@@ -37,7 +37,7 @@ public struct JSONDataFixture: Fixture {
     public var httpStatus: HTTPStatus
     public var headerFields: [String : String]
 
-    public init(_ source: [String : String], status: HTTPStatus? = nil) {
+    public init(_ source: [String : Any], status: HTTPStatus? = nil) {
         let json = try? JSONSerialization.data(withJSONObject: source, options: .prettyPrinted)
         data = (json ?? Data())
 
