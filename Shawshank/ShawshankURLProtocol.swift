@@ -16,10 +16,6 @@ open class ShawshankURLProtocol: URLProtocol {
         return (Shawshank.harness(for: request) != nil)
     }
 
-//    open override class func canInit(with task: URLSessionTask) -> Bool {
-//        return (Shawshank.harness(for: task) != nil)
-//    }
-
     open override class func canonicalRequest(for request: URLRequest) -> URLRequest {
         return request
     }

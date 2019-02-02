@@ -17,7 +17,7 @@ class ShawshankTests: XCTestCase {
     }
     
     override func tearDown() {
-        Shawshank.release()
+        Shawshank.unbind()
         super.tearDown()
     }
     
