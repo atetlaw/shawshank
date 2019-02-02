@@ -1,5 +1,6 @@
 # Shawshank
 "I guess it comes down to a simple choice, really. Get busy testing or get busy crying."
+
 https://www.youtube.com/watch?v=djigcpyzBUQ
 
 As seen in [Testing Tips & Tricks](https://developer.apple.com/videos/play/wwdc2018/417/?time=480) from WWDC2018 Using an `URLProtocol` subclass is a great way to mock responses from network calls in unit tests, but it can be laborious to setup. The goal of Shawshank was to make mocking a network response a one-liner.
@@ -61,10 +62,13 @@ func testShawshankMatchingDataTaskRespondingWithJSONDataFixture() {
 ```
 
 ## Ackowledgments
-The original aricle: https://nshipster.com/nsurlprotocol/
-https://www.raywenderlich.com/59982/nsurlprotocol-tutorial
-http://swiftandpainless.com/an-easy-way-to-stub-nsurlsession/
 
-https://github.com/AliSoftware/OHHTTPStubs
-https://github.com/kylef/Mockingjay
+* The original aricle: https://nshipster.com/nsurlprotocol/
+* https://www.raywenderlich.com/59982/nsurlprotocol-tutorial
+* http://swiftandpainless.com/an-easy-way-to-stub-nsurlsession/
+
+### Inspiration
+
+* https://github.com/AliSoftware/OHHTTPStubs
+* https://github.com/kylef/Mockingjay
 
