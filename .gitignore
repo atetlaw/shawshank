@@ -1,20 +1,40 @@
 # Mac OS X
 .DS_Store
-*.swp
-*~.nib
+
+# Xcode
+
+## Build generated
 build/
+DerivedData
+
+## Various settings
 *.pbxuser
-*.perspective
-*.perspectivev3
-*xcuserdata
-*.xccheckout
+!default.pbxuser
 *.mode1v3
+!default.mode1v3
 *.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata
+
+## Other
+*.xccheckout
 *.moved-aside
+*.xcuserstate
+*.xcscmblueprint
+IDEWorkspaceChecks.*
 
-# New in Xcode 7!
-*xcshareddata/xcbaselines
-*xcshareddata/*.xcscmblueprint
+## Obj-C/Swift specific
+*.hmap
+*.ipa
 
-# Git
-*.orig
+## Playgrounds
+timeline.xctimeline
+playground.xcworkspace
+
+# Swift Package Manager
+.build/
+
+# Carthage
+Carthage/Build

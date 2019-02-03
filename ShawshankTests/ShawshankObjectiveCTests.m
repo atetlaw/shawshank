@@ -3,7 +3,7 @@
 //  Shawshank
 //
 //  Created by Andrew Tetlaw on 1/1/17.
-//  Copyright © 2017 SafetyCulture. All rights reserved.
+//  Copyright © 2017 Andrew Tetlaw. All rights reserved.
 //
 
 @import XCTest;
