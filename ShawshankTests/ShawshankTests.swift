@@ -33,9 +33,8 @@ class ShawshankTests: XCTestCase {
         XCTAssertTrue(Shawshank.isActive)
         let harness = Shawshank.harness(for: testSessionTask)
         XCTAssertNotNil(harness)
-        if let response = harness?.respond(to: testRequest) {
-            XCTAssertTrue(response == Response.none)
-        }
+        guard case .none = harness!.respond(to: testRequest) else { return }
+
     }
 
     func testShawshankRequestHarnessCanTakeTask() {
@@ -43,9 +42,7 @@ class ShawshankTests: XCTestCase {
         XCTAssertTrue(Shawshank.isActive)
         let harness = Shawshank.harness(for: testSessionTask)
         XCTAssertNotNil(harness)
-        if let response = harness?.respond(to: testRequest) {
-            XCTAssertTrue(response == Response.none)
-        }
+        guard case .none = harness!.respond(to: testRequest) else { return }
     }
 
     func testShawshankTaskHarnessCannotTakeRequest() {
@@ -53,9 +50,6 @@ class ShawshankTests: XCTestCase {
         XCTAssertTrue(Shawshank.isActive)
         let harness = Shawshank.harness(for: testRequest)
         XCTAssertNil(harness)
-        if let response = harness?.respond(to: testRequest) {
-            XCTAssertTrue(response == Response.none)
-        }
     }
 
     func testShawshankRespondsToSharedSessionRequest() {

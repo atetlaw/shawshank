@@ -42,12 +42,7 @@ open class ShawshankURLProtocol: URLProtocol {
             if let url = request.url, let response = fixture.response(forURL: url) {
                 respond(with: response, data: fixture.data)
             }
-
-        case .shkResponse(let response):
-            respond(with: response)
-
         }
-
         client?.urlProtocolDidFinishLoading(self)
     }
     
@@ -61,14 +56,6 @@ open class ShawshankURLProtocol: URLProtocol {
         client?.urlProtocol(self, didReceive: with, cacheStoragePolicy: .notAllowed)
         if let data = data {
             client?.urlProtocol(self, didLoad: data)
-        }
-    }
-
-    private func respond(with: SHKResponse) {
-        if let error = with.requestError {
-            client?.urlProtocol(self, didFailWithError: error)
-        } else if let response = with.httpResponse {
-            respond(with: response, data: with.responseData as Data?)
         }
     }
 }

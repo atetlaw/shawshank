@@ -11,7 +11,6 @@ public class Shawshank {
 
     fileprivate static var harnesses = [Harness]()
     private static var protocolRegistered: Bool = false
-    private static let mutex = Mutex()
 
     public static var isActive: Bool { return harnesses.count > 0 }
 
@@ -67,26 +66,16 @@ public class Shawshank {
 
     @discardableResult
     public class func unbind() -> Shawshank.Type {
-        mutex.sync {
-            harnesses.removeAll()
-            protocolRegistered = false
-        }
-
+        harnesses.removeAll()
+        protocolRegistered = false
         URLProtocol.unregisterClass(ShawshankURLProtocol.self)
         return Shawshank.self
     }
 
     private class func register() {
-
-        let shouldRegister = mutex.sync { () -> Bool in
-            guard !protocolRegistered else { return false }
-            protocolRegistered = true
-            return true
-        }
-
-        if shouldRegister {
-            URLProtocol.registerClass(ShawshankURLProtocol.self)
-        }
+        guard !protocolRegistered else { return }
+        protocolRegistered = true
+        URLProtocol.registerClass(ShawshankURLProtocol.self)
     }
 
     class func harness(for request: URLRequest) -> Harness? {
