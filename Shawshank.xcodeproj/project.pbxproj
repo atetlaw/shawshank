@@ -39,6 +39,10 @@
 		491E846E1E28B23A00613666 /* ShankPublicAPITests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShankPublicAPITests.swift; sourceTree = "<group>"; };
 		493270DB1E0A6F5C00052F09 /* test.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = test.json; sourceTree = "<group>"; };
 		49725CC21E07E04D009AA63B /* Typical.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Typical.swift; sourceTree = "<group>"; };
+		499F4950221ACF07003A50A2 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+		499F4951221ACF07003A50A2 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		499F4952221ACF07003A50A2 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		499F4953221ACF07003A50A2 /* Shawshank.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = Shawshank.podspec; sourceTree = "<group>"; };
 		49B5DDF61DF3A9DA00CD1DA7 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		49B5DDF71DF3A9DA00CD1DA7 /* Shawshank.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Shawshank.h; sourceTree = "<group>"; };
 		49B5DDF81DF3A9DA00CD1DA7 /* Shawshank.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Shawshank.swift; sourceTree = "<group>"; };
@@ -73,6 +77,10 @@
 		491E257A1DF0E7980053955F = {
 			isa = PBXGroup;
 			children = (
+				499F4950221ACF07003A50A2 /* .gitignore */,
+				499F4951221ACF07003A50A2 /* LICENSE */,
+				499F4952221ACF07003A50A2 /* README.md */,
+				499F4953221ACF07003A50A2 /* Shawshank.podspec */,
 				49B5DDF51DF3A9DA00CD1DA7 /* Shawshank */,
 				49B5DDF91DF3A9DA00CD1DA7 /* ShawshankTests */,
 				491E25851DF0E7980053955F /* Products */,

@@ -7,6 +7,20 @@ As seen in [Testing Tips & Tricks](https://developer.apple.com/videos/play/wwdc2
 
 It does 2 things: creates a way to match network requests, and specifies what sort of response to return if the match is true.
 
+## Installation
+### Carthage
+
+In your `Cartfile` use:
+
+```
+github "atetlaw/shawshank"
+```
+
+Shawshank only needs to be added to your unit testing target not your app's main target. Remember to add the [Carthage run script phase](https://github.com/Carthage/Carthage#adding-frameworks-to-an-application) to your testing target, as well as adding `Shawshank.framework` to your `Link Binaries With Libraries` phase (Just click on the `+` button, the `Add Other...` button, and select the `Shawshank.framework` file in the `Carthage/Build` folder.)
+
+### Cocoapods
+
+
 ## API Examples
 ### Swift
 ```swift
