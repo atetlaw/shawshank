@@ -1,3 +1,4 @@
+![](https://img.shields.io/github/release/atetlaw/shawshank.svg?style=flat)
 # Shawshank
 "I guess it comes down to a simple choice, really. Get busy testing or get busy crying."
 
@@ -20,6 +21,14 @@ Shawshank only needs to be added to your unit testing target not your app's main
 
 ### Cocoapods
 
+Add `pod 'Shawshank'` to your `Podfile`, but limit it to your testing target like so:
+
+```
+target 'MyAppTests' do
+    pod 'Shawshank'
+end
+```
+Where `MyAppTests` is the name of your app's unit test target. Then run a `pod install`.
 
 ## API Examples
 ### Swift

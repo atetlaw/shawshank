@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name = 'Shawshank'
-  s.version = '0.0.3'
+  s.version = '0.0.4'
   s.license = 'MIT'
   s.summary = 'Easy stubbing for network calls in Swift unit tests'
   s.homepage = 'https://github.com/atetlaw/shawshank'
