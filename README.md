@@ -1,8 +1,6 @@
 ![](https://img.shields.io/github/release/atetlaw/shawshank.svg?style=flat)
 # Shawshank
-"I guess it comes down to a simple choice, really. Get busy testing or get busy crying."
-
-https://www.youtube.com/watch?v=djigcpyzBUQ
+"I guess it comes down to a simple choice, really. Get busy testing or get busy crying." [The Shawshank Redemption](https://www.imdb.com/title/tt0111161/quotes/qt0470748)
 
 As seen in [Testing Tips & Tricks](https://developer.apple.com/videos/play/wwdc2018/417/?time=480) from WWDC2018 Using an `URLProtocol` subclass is a great way to mock responses from network calls in unit tests, but it can be laborious to setup. The goal of Shawshank was to make mocking a network response a one-liner.
 
