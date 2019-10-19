@@ -62,7 +62,7 @@ class ShankPublicAPITests: XCTestCase {
             XCTAssertEqual(httpResponse.statusCode, 200)
             XCTAssertNotNil(data)
             guard let data = data else { XCTFail(); return }
-            guard let json = try? JSONSerialization.jsonObject(with: data, options:[]) as? Dictionary<String, String> else { XCTFail(); return }
+            guard let json = ((try? JSONSerialization.jsonObject(with: data, options:[]) as? Dictionary<String, String>) as Dictionary<String, String>??) else { XCTFail(); return }
             XCTAssertEqual(json?["test"], "json")
             expect.fulfill()
             }.resume()
@@ -86,7 +86,7 @@ class ShankPublicAPITests: XCTestCase {
             XCTAssertEqual(httpResponse.statusCode, 200)
             XCTAssertNotNil(data)
             guard let data = data else { XCTFail(); return }
-            guard let json = try? JSONSerialization.jsonObject(with: data, options:[]) as? Dictionary<String, String> else { XCTFail(); return }
+            guard let json = ((try? JSONSerialization.jsonObject(with: data, options:[]) as? Dictionary<String, String>) as Dictionary<String, String>??) else { XCTFail(); return }
             XCTAssertEqual(json?["test"], "json")
             expect.fulfill()
             }.resume()
@@ -110,7 +110,7 @@ class ShankPublicAPITests: XCTestCase {
             XCTAssertEqual(httpResponse.statusCode, 200)
             XCTAssertNotNil(data)
             guard let data = data else { XCTFail(); return }
-            guard let json = try? JSONSerialization.jsonObject(with: data, options:[]) as? Dictionary<String, String> else { XCTFail(); return }
+            guard let json = ((try? JSONSerialization.jsonObject(with: data, options:[]) as? Dictionary<String, String>) as Dictionary<String, String>??) else { XCTFail(); return }
             XCTAssertEqual(json?["key"], "value")
             expect.fulfill()
             }.resume()
